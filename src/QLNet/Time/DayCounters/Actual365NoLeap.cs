@@ -43,15 +43,15 @@ namespace QLNet
 
             int s1, s2;
 
-            s1 = d1.Day + MonthOffset[d1.month() - 1] + (d1.year() * 365);
-            s2 = d2.Day + MonthOffset[d2.month() - 1] + (d2.year() * 365);
+            s1 = d1.Day + MonthOffset[d1.month() - Const.ONE_INT] + (d1.year() * Const.THREE_HUNDRED_SIXTY_FIVE_INT);
+            s2 = d2.Day + MonthOffset[d2.month() - Const.ONE_INT] + (d2.year() * Const.THREE_HUNDRED_SIXTY_FIVE_INT);
 
-            if (d1.month() == (int)Month.Feb && d1.Day == 29)
+            if (d1.month() == (int)Month.Feb && d1.Day == Const.TWENTY_NINE_INT)
             {
                --s1;
             }
 
-            if (d2.month() == (int)Month.Feb && d2.Day == 29)
+            if (d2.month() == (int)Month.Feb && d2.Day == Const.TWENTY_NINE_INT)
             {
                --s2;
             }
@@ -60,7 +60,7 @@ namespace QLNet
          }
          public override double yearFraction(Date d1, Date d2, Date refPeriodStart, Date refPeriodEnd)
          {
-            return dayCount(d1, d2) / 365.0;
+            return dayCount(d1, d2) / Const.THREE_HUNDRED_SIXTY_FIVE_DOUBLE;
          }
       }
    }

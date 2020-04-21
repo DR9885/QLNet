@@ -31,7 +31,7 @@ namespace QLNet
 
       public override string name() { return "Business/252(" + calendar_.name() + ")"; }
       public override int dayCount(Date d1, Date d2) { return calendar_.businessDaysBetween(d1, d2); }
-      public override double yearFraction(Date d1, Date d2, Date d3, Date d4) { return dayCount(d1, d2) / 252.0; }
+      public override double yearFraction(Date d1, Date d2, Date d3, Date d4) { return dayCount(d1, d2) / Const.TWO_HUNDRED_FIFTY_TWO_DOUBLE; }
 
       private Calendar calendar_;
 

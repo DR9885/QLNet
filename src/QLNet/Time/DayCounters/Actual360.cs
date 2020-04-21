@@ -45,7 +45,7 @@ namespace QLNet
          public override int dayCount(Date d1, Date d2) { return (d2 - d1); }
          public override double yearFraction(Date d1, Date d2, Date refPeriodStart, Date refPeriodEnd)
          {
-            return Date.daysBetween(d1, d2) / 360.0;
+            return Date.daysBetween(d1, d2) / Const.THREE_HUNDRED_SIXTY_DOUBLE;
          }
 
       }
@@ -56,10 +56,10 @@ namespace QLNet
          private IncludedImpl() { }
 
          public override string name() { return "Actual/360 (inc)"; }
-         public override int dayCount(Date d1, Date d2) { return (d2 - d1) + 1; }
+         public override int dayCount(Date d1, Date d2) { return (d2 - d1) + Const.ONE_INT; }
          public override double yearFraction(Date d1, Date d2, Date refPeriodStart, Date refPeriodEnd)
          {
-            return (Date.daysBetween(d1, d2) + 1) / 360.0;
+            return (Date.daysBetween(d1, d2) + Const.ONE_INT) / Const.THREE_HUNDRED_SIXTY_DOUBLE;
          }
 
       }

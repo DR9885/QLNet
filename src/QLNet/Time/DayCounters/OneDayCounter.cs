@@ -33,7 +33,7 @@ namespace QLNet
          public override int dayCount(Date d1, Date d2)
          {
             // the sign is all we need
-            return (d2 >= d1 ? 1 : -1);
+            return (d2 >= d1 ? Const.ONE_INT : -Const.ONE_INT);
          }
 
          public override double yearFraction(Date d1, Date d2, Date refPeriodStart, Date refPeriodEnd)

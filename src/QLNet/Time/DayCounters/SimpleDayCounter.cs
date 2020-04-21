@@ -45,7 +45,7 @@ namespace QLNet
                 (dm1 < dm2 && Date.isEndOfMonth(d1)))
             {
 
-               return (d2.Year - d1.Year) + (d2.Month - d1.Month) / 12.0;
+               return (d2.Year - d1.Year) + (d2.Month - d1.Month) / Const.TWELVE_DOUBLE;
             }
             else
                return Thirty360.US_Impl.Singleton.yearFraction(d1, d2, d3, d4);

@@ -81,7 +81,7 @@ namespace QLNet
          public override double yearFraction(Date d1, Date d2, Date d3, Date d4)
          {
             if (d1 == d2)
-               return 0.0;
+               return Const.ZERO_DOUBLE;
 
             if (d2 < d1)
                return -yearFraction(d2, d1, d3, d4);
@@ -89,11 +89,11 @@ namespace QLNet
             List<Date> couponDates =
                getListOfPeriodDatesIncludingQuasiPayments(schedule_);
 
-            double yearFractionSum = 0.0;
-            for (int i = 0; i < couponDates.Count - 1; i++)
+            double yearFractionSum = Const.ZERO_DOUBLE;
+            for (int i = Const.ZERO_INT; i < couponDates.Count - Const.ONE_INT; i++)
             {
                Date startReferencePeriod = couponDates[i];
-               Date endReferencePeriod = couponDates[i + 1];
+               Date endReferencePeriod = couponDates[i + Const.ONE_INT];
                if (d1 < endReferencePeriod && d2 > startReferencePeriod)
                {
                   yearFractionSum +=
@@ -110,8 +110,8 @@ namespace QLNet
          private List<Date> getListOfPeriodDatesIncludingQuasiPayments(Schedule schedule)
          {
             // Process the schedule into an array of dates.
-            Date issueDate = schedule.date(0);
-            Date firstCoupon = schedule.date(1);
+            Date issueDate = schedule.date(Const.ZERO_INT);
+            Date firstCoupon = schedule.date(Const.ONE_INT);
             Date notionalCoupon =
                schedule.calendar().advance(firstCoupon,
                                            -schedule.tenor(),
@@ -119,7 +119,7 @@ namespace QLNet
                                            schedule.endOfMonth());
 
             List<Date> newDates = schedule.dates();
-            newDates[0] = notionalCoupon;
+            newDates[Const.ZERO_INT] = notionalCoupon;
 
             //long first coupon
             if (notionalCoupon > issueDate)
@@ -129,7 +129,7 @@ namespace QLNet
                                               -schedule.tenor(),
                                               schedule.businessDayConvention(),
                                               schedule.endOfMonth());
-               newDates.Insert(0, priorNotionalCoupon);
+               newDates.Insert(Const.ZERO_INT, priorNotionalCoupon);
             }
             return newDates;
          }
@@ -146,8 +146,8 @@ namespace QLNet
             int couponsPerYear;
             if (referenceDayCount < 16)
             {
-               couponsPerYear = 1;
-               referenceDayCount = impl.dayCount(d1, d1 + new Period(1, TimeUnit.Years));
+               couponsPerYear = Const.ONE_INT;
+               referenceDayCount = impl.dayCount(d1, d1 + new Period(Const.ONE_INT, TimeUnit.Years));
             }
             else
             {
@@ -159,8 +159,8 @@ namespace QLNet
          private int findCouponsPerYear<T>(T impl, Date refStart, Date refEnd) where T : DayCounter
          {
             // This will only work for day counts longer than 15 days.
-            int months = (int)(0.5 + 12 * (double)(impl.dayCount(refStart, refEnd)) / 365.0);
-            return (int)(0.5 + 12.0 / months);
+            int months = (int)(Const.FIFTY_PERCENT + Const.TWELVE_INT * (double)(impl.dayCount(refStart, refEnd)) / Const.THREE_HUNDRED_SIXTY_FIVE_DOUBLE);
+            return (int)(Const.FIFTY_PERCENT + Const.TWELVE_DOUBLE / months);
          }
 
          private Schedule schedule_;
@@ -179,7 +179,7 @@ namespace QLNet
          public override double yearFraction(Date d1, Date d2, Date d3, Date d4)
          {
             if (d1 == d2)
-               return 0;
+               return Const.ZERO_INT;
             if (d1 > d2)
                return -yearFraction(d2, d1, d3, d4);
 
@@ -192,18 +192,18 @@ namespace QLNet
                              ", reference period start: " + refPeriodStart + ", reference period end: " + refPeriodEnd);
 
             // estimate roughly the length in months of a period
-            int months = (int)(0.5 + 12 * (refPeriodEnd - refPeriodStart) / 365.0);
+            int months = (int)(Const.FIFTY_PERCENT + Const.TWELVE_INT * (refPeriodEnd - refPeriodStart) / Const.THREE_HUNDRED_SIXTY_FIVE_DOUBLE);
 
             // for short periods...
-            if (months == 0)
+            if (months == Const.ZERO_INT)
             {
                // ...take the reference period as 1 year from d1
                refPeriodStart = d1;
                refPeriodEnd = d1 + TimeUnit.Years;
-               months = 12;
+               months = Const.TWELVE_INT;
             }
 
-            double period = months / 12.0;
+            double period = months / Const.TWELVE_DOUBLE;
 
             if (d2 <= refPeriodEnd)
             {
@@ -244,7 +244,7 @@ namespace QLNet
 
                // the part from refPeriodEnd to d2
                // count how many regular periods are in [refPeriodEnd, d2], then add the remaining time
-               int i = 0;
+               int i = Const.ZERO_INT;
                Date newRefStart, newRefEnd;
                for (; ;)
                {
@@ -279,13 +279,13 @@ namespace QLNet
          public override double yearFraction(Date d1, Date d2, Date refPeriodStart, Date refPeriodEnd)
          {
             if (d1 == d2)
-               return 0;
+               return Const.ZERO_INT;
             if (d1 > d2)
                return -yearFraction(d2, d1, null, null);
 
             int y1 = d1.Year, y2 = d2.Year;
-            double dib1 = (Date.IsLeapYear(y1) ? 366 : 365),
-                   dib2 = (Date.IsLeapYear(y2) ? 366 : 365);
+            double dib1 = (Date.IsLeapYear(y1) ? Const.THREE_HUNDRED_SIXTY_SIX_INT : Const.THREE_HUNDRED_SIXTY_FIVE_INT),
+                   dib2 = (Date.IsLeapYear(y2) ? Const.THREE_HUNDRED_SIXTY_SIX_INT : Const.THREE_HUNDRED_SIXTY_FIVE_INT);
 
             double sum = y2 - y1 - 1;
             sum += Date.daysBetween(d1, new Date(1, Month.January, y1 + 1)) / dib1;
@@ -307,16 +307,16 @@ namespace QLNet
          public override double yearFraction(Date d1, Date d2, Date refPeriodStart, Date refPeriodEnd)
          {
             if (d1 == d2)
-               return 0;
+               return Const.ZERO_INT;
             if (d1 > d2)
                return -yearFraction(d2, d1, null, null);
 
             Date newD2 = d2, temp = d2;
-            double sum = 0;
+            double sum = Const.ZERO_INT;
             while (temp > d1)
             {
                temp = newD2 - TimeUnit.Years;
-               if (temp.Day == 28 && temp.Month == 2 && Date.IsLeapYear(temp.Year))
+               if (temp.Day == Const.TWENTY_EIGHT_INT && temp.Month == 2 && Date.IsLeapYear(temp.Year))
                   temp += 1;
                if (temp >= d1)
                {
@@ -325,17 +325,17 @@ namespace QLNet
                }
             }
 
-            double den = 365;
+            double den = Const.THREE_HUNDRED_SIXTY_FIVE_INT;
 
             if (Date.IsLeapYear(newD2.Year))
             {
-               temp = new Date(29, Month.February, newD2.Year);
+               temp = new Date(Const.TWENTY_NINE_INT, Month.February, newD2.Year);
                if (newD2 > temp && d1 <= temp)
                   den += 1;
             }
             else if (Date.IsLeapYear(d1.Year))
             {
-               temp = new Date(29, Month.February, d1.Year);
+               temp = new Date(Const.TWENTY_NINE_INT, Month.February, d1.Year);
                if (newD2 > temp && d1 <= temp)
                   den += 1;
             }

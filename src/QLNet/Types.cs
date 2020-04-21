@@ -56,7 +56,9 @@ namespace QLNet
       public const int SEVEN_INT = 7;
       public const int EIGHT_INT = 8;
       public const int TWELVE_INT = 12;
+      public const int TWENTY_SEVEN_INT = 27;
       public const int TWENTY_EIGHT_INT = 28;
+      public const int TWENTY_NINE_INT = 29;
       public const int THIRTY_INT = 30;
       public const int THIRTY_ONE_INT = 31;
       public const int ONE_HUNDRED_INT = 100;
@@ -78,6 +80,9 @@ namespace QLNet
       public const double TWENTY_DOUBLE = 20.0;
       public const double THIRTY_DOUBLE = 30.0;
       public const double ONE_HUNDRED_DOUBLE = 100.0;
+      public const double TWO_HUNDRED_FIFTY_TWO_DOUBLE = 252.0;
+      public const double THREE_HUNDRED_SIXTY_DOUBLE = 360.0;
+      public const double THREE_HUNDRED_SIXTY_FIVE_DOUBLE = 365.0;
 
       public const double ACCURACY_FOUR = 1.0e-4;
       public const double ACCURACY_FIVE = 1.0e-5;

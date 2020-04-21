@@ -67,16 +67,16 @@ namespace QLNet
             int mm1 = d1.Month, mm2 = d2.Month;
             int yy1 = d1.Year, yy2 = d2.Year;
 
-            if (dd2 == 31 && dd1 < 30)
+            if (dd2 == Const.THIRTY_ONE_INT && dd1 < Const.THIRTY_INT)
             {
-               dd2 = 1;
+               dd2 = Const.ONE_INT;
                mm2++;
             }
 
-            return 360 * (yy2 - yy1) + 30 * (mm2 - mm1 - 1) + System.Math.Max(0, 30 - dd1) + System.Math.Min(30, dd2);
+            return Const.THREE_HUNDRED_SIXTY_INT * (yy2 - yy1) + Const.THIRTY_INT * (mm2 - mm1 - Const.ONE_INT) + System.Math.Max(Const.ZERO_INT, Const.THIRTY_INT - dd1) + System.Math.Min(Const.THIRTY_INT, dd2);
          }
 
-         public override double yearFraction(Date d1, Date d2, Date d3, Date d4) { return dayCount(d1, d2) / 360.0; }
+         public override double yearFraction(Date d1, Date d2, Date d3, Date d4) { return dayCount(d1, d2) / Const.THREE_HUNDRED_SIXTY_DOUBLE; }
       }
 
       private class EU_Impl : DayCounter
@@ -91,10 +91,10 @@ namespace QLNet
             int mm1 = d1.Month, mm2 = d2.Month;
             int yy1 = d1.Year, yy2 = d2.Year;
 
-            return 360 * (yy2 - yy1) + 30 * (mm2 - mm1 - 1) + System.Math.Max(0, 30 - dd1) + System.Math.Min(30, dd2);
+            return Const.THREE_HUNDRED_SIXTY_INT * (yy2 - yy1) + Const.THIRTY_INT * (mm2 - mm1 - Const.ONE_INT) + System.Math.Max(Const.ZERO_INT, Const.THIRTY_INT - dd1) + System.Math.Min(Const.THIRTY_INT, dd2);
          }
 
-         public override double yearFraction(Date d1, Date d2, Date d3, Date d4) { return dayCount(d1, d2) / 360.0; }
+         public override double yearFraction(Date d1, Date d2, Date d3, Date d4) { return dayCount(d1, d2) / Const.THREE_HUNDRED_SIXTY_DOUBLE; }
       }
 
       private class IT_Impl : DayCounter
@@ -109,15 +109,15 @@ namespace QLNet
             int mm1 = d1.Month, mm2 = d2.Month;
             int yy1 = d1.Year, yy2 = d2.Year;
 
-            if (mm1 == 2 && dd1 > 27)
-               dd1 = 30;
-            if (mm2 == 2 && dd2 > 27)
-               dd2 = 30;
+            if (mm1 == 2 && dd1 > Const.TWENTY_SEVEN_INT)
+               dd1 = Const.THIRTY_INT;
+            if (mm2 == 2 && dd2 > Const.TWENTY_SEVEN_INT)
+               dd2 = Const.THIRTY_INT;
 
-            return 360 * (yy2 - yy1) + 30 * (mm2 - mm1 - 1) + System.Math.Max(0, 30 - dd1) + System.Math.Min(30, dd2);
+            return Const.THREE_HUNDRED_SIXTY_INT * (yy2 - yy1) + Const.THIRTY_INT * (mm2 - mm1 - 1) + System.Math.Max(Const.ZERO_INT, Const.THIRTY_INT - dd1) + System.Math.Min(Const.THIRTY_INT, dd2);
          }
 
-         public override double yearFraction(Date d1, Date d2, Date d3, Date d4) { return dayCount(d1, d2) / 360.0; }
+         public override double yearFraction(Date d1, Date d2, Date d3, Date d4) { return dayCount(d1, d2) / Const.THREE_HUNDRED_SIXTY_DOUBLE; }
       }
 
    }
