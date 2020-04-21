@@ -34,10 +34,10 @@ namespace QLNet
       // Serial numbers in Excel have a known problem with leap year 1900
       public Date(int serialNumber)
       {
-         date = (new DateTime(1899, 12, 31)).AddDays(serialNumber - 1);
+         date = (new DateTime(1899, Const.TWELVE_INT, Const.THIRTY_ONE_INT)).AddDays(serialNumber - Const.ONE_INT);
       }
 
-      public Date(int d, Month m, int y, int h = 0, int mi = 0, int s = 0, int ms = 0)
+      public Date(int d, Month m, int y, int h = Const.ZERO_INT, int mi = Const.ZERO_INT, int s = Const.ZERO_INT, int ms = Const.ZERO_INT)
          : this(new DateTime(y, (int)m, d, h, mi, s, ms))
       { }
 
@@ -57,7 +57,7 @@ namespace QLNet
 
       public int serialNumber()
       {
-         return (date - new DateTime(1899, 12, 31).Date).Days + 1;
+         return (date - new DateTime(1899, Const.TWELVE_INT, Const.THIRTY_ONE_INT).Date).Days + Const.ONE_INT;
       }
 
       public int Day { get { return date.Day; } }
@@ -80,7 +80,7 @@ namespace QLNet
 
       public int weekday()
       {
-         return (int) date.DayOfWeek + 1;
+         return (int) date.DayOfWeek + Const.ONE_INT;
       } // QL compatible definition
 
       public DayOfWeek DayOfWeek { get { return date.DayOfWeek; } }
@@ -89,7 +89,7 @@ namespace QLNet
       public int minutes { get { return date.Minute; } }
       public int seconds { get { return date.Second; } }
       public int milliseconds { get { return date.Millisecond; } }
-      public double fractionOfSecond { get { return (double)date.Millisecond / 1000; } }
+      public double fractionOfSecond { get { return (double)date.Millisecond / Const.ONE_THOUSAND_INT; } }
 
       public double fractionOfDay()
       {
@@ -99,12 +99,12 @@ namespace QLNet
       // static properties
       public static Date minDate()
       {
-         return new Date(1, 1, 1901);
+         return new Date(Const.ONE_INT, Const.ONE_INT, 1901);
       }
 
       public static Date maxDate()
       {
-         return new Date(31, 12, 2199);
+         return new Date(Const.THIRTY_ONE_INT, Const.TWELVE_INT, 2199);
       }
 
       public static Date Today { get { return new Date(DateTime.Today); } }
@@ -138,17 +138,17 @@ namespace QLNet
       public static Date nextWeekday(Date d, DayOfWeek dayOfWeek)
       {
          int wd = dayOfWeek - d.DayOfWeek;
-         return d + (wd >= 0 ? wd : (7 + wd));
+         return d + (wd >= Const.ZERO_INT ? wd : (Const.SEVEN_INT + wd));
       }
 
       //! n-th given weekday in the given month and year, e.g., the 4th Thursday of March, 1998 was March 26th, 1998.
       public static Date nthWeekday(int nth, DayOfWeek dayOfWeek, int m, int y)
       {
-         Utils.QL_REQUIRE(nth > 0, () => "zeroth day of week in a given (month, year) is undefined");
-         Utils.QL_REQUIRE(nth < 6, () => "no more than 5 weekday in a given (month, year)");
+         Utils.QL_REQUIRE(nth > Const.ZERO_INT, () => "zeroth day of week in a given (month, year) is undefined");
+         Utils.QL_REQUIRE(nth < Const.SIX_INT, () => "no more than 5 weekday in a given (month, year)");
          DayOfWeek first = new DateTime(y, m, 1).DayOfWeek;
-         int skip = nth - (dayOfWeek >= first ? 1 : 0);
-         return new Date(1, m, y) + (dayOfWeek - first + skip * 7);
+         int skip = nth - (dayOfWeek >= first ? Const.ONE_INT : Const.ZERO_INT);
+         return new Date(Const.ONE_INT, m, y) + (dayOfWeek - first + skip * Const.SEVEN_INT);
       }
 
       public static int monthOffset(int m, bool leapYear)
@@ -159,7 +159,7 @@ namespace QLNet
             181, 212, 243, 273, 304, 334, // Jun - Dec
             365 // used in dayOfMonth to bracket day
          };
-         return (MonthOffset[m - 1] + ((leapYear && m > 1) ? 1 : 0));
+         return (MonthOffset[m - Const.ONE_INT] + ((leapYear && m > Const.ONE_INT) ? Const.ONE_INT : Const.ZERO_INT));
       }
 
       public static Date advance(Date d, int n, TimeUnit u)
@@ -205,12 +205,12 @@ namespace QLNet
 
       public static Date operator +(Date d, TimeUnit u)
       {
-         return advance(d, 1, u);
+         return advance(d, Const.ONE_INT, u);
       }
 
       public static Date operator -(Date d, TimeUnit u)
       {
-         return advance(d, -1, u);
+         return advance(d, -Const.ONE_INT, u);
       }
 
       public static Date operator +(Date d, Period p)
@@ -225,13 +225,13 @@ namespace QLNet
 
       public static Date operator ++(Date d)
       {
-         d = d + 1;
+         d = d + Const.ONE_INT;
          return d;
       }
 
       public static Date operator --(Date d)
       {
-         d = d - 1;
+         d = d - Const.ONE_INT;
          return d;
       }
 
@@ -332,10 +332,10 @@ namespace QLNet
       public int CompareTo(object obj)
       {
          if (this < (Date) obj)
-            return -1;
+            return -Const.ONE_INT;
          if (this == (Date) obj)
-            return 0;
-         return 1;
+            return Const.ZERO_INT;
+         return Const.ONE_INT;
       }
    }
 }
