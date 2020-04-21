@@ -1015,7 +1015,7 @@ namespace QLNet
                   if (t <= Const.ONE_DOUBLE / N)
                      d2Pdy2 += c * Const.TWO_DOUBLE * B * B * B * t * t;
                   else
-                     d2Pdy2 += c * B * t * (N * t + Const.ONE_INT) / (N * (1 + r / N) * (1 + r / N));
+                     d2Pdy2 += c * B * t * (N * t + Const.ONE_INT) / (N * (Const.ONE_INT + r / N) * (Const.ONE_INT + r / N));
                   break;
                default:
                   Utils.QL_FAIL("unknown compounding convention (" + yield.compounding() + ")");
