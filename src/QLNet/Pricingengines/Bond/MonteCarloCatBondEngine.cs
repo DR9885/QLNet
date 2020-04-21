@@ -88,11 +88,11 @@ namespace QLNet
                            out double expectedLoss)
       {
          const int MAX_PATHS = 10000; //TODO
-         lossProbability =  0.0;
-         exhaustionProbability = 0.0;
-         expectedLoss = 0.0;
+         lossProbability =  Const.ZERO_DOUBLE;
+         exhaustionProbability = Const.ZERO_DOUBLE;
+         expectedLoss = Const.ZERO_DOUBLE;
          if (arguments_.cashflows.empty())
-            return 0.0;
+            return Const.ZERO_DOUBLE;
 
          if (settlementDate == null)
             settlementDate = Settings.evaluationDate();
@@ -100,7 +100,7 @@ namespace QLNet
          if (npvDate == null)
             npvDate = settlementDate;
 
-         double totalNPV = 0.0;
+         double totalNPV = Const.ZERO_DOUBLE;
          Date effectiveDate = Date.Max(arguments_.startDate, settlementDate);
          Date maturityDate = arguments_.cashflows.Last().date();
          CatSimulation catSimulation = catRisk_.newSimulation(effectiveDate, maturityDate);
@@ -115,9 +115,9 @@ namespace QLNet
             {
                //optimization, most paths will not include any loss
                totalNPV += pathNpv(includeSettlementDateFlows, settlementDate, notionalPath);
-               lossProbability += 1;
-               if (notionalPath.loss().IsEqual(1))
-                  exhaustionProbability += 1;
+               lossProbability += Const.ONE_INT;
+               if (notionalPath.loss().IsEqual(Const.ONE_INT))
+                  exhaustionProbability += Const.ONE_INT;
                expectedLoss += notionalPath.loss();
             }
             else
@@ -138,7 +138,7 @@ namespace QLNet
                                Date settlementDate,
                                NotionalPath notionalPath)
       {
-         double totalNPV = 0.0;
+         double totalNPV = Const.ZERO_DOUBLE;
          for (int i = 0; i < arguments_.cashflows.Count; ++i)
          {
             if (!arguments_.cashflows[i].hasOccurred(settlementDate, includeSettlementDateFlows))

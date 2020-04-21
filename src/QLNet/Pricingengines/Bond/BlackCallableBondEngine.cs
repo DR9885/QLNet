@@ -59,7 +59,7 @@ namespace QLNet
       public override void calculate()
       {
          // validate args for Black engine
-         Utils.QL_REQUIRE(arguments_.putCallSchedule.Count == 1, () => "Must have exactly one call/put date to use Black Engine");
+         Utils.QL_REQUIRE(arguments_.putCallSchedule.Count == Const.ONE_INT, () => "Must have exactly one call/put date to use Black Engine");
 
          Date settle = arguments_.settlementDate;
          Date exerciseDate = arguments_.callabilityDates[0];
@@ -115,8 +115,8 @@ namespace QLNet
             1. cashflows are in ascending order !
             2. income = coupons paid between settlementDate() and put/call date
          */
-         double income = 0.0;
-         for (int i = 0; i < cf.Count - 1; ++i)
+         double income = Const.ZERO_DOUBLE;
+         for (int i = 0; i < cf.Count - Const.ONE_INT; ++i)
          {
             if (!cf[i].hasOccurred(settlement, false))
             {

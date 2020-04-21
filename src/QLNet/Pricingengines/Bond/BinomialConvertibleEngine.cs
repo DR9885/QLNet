@@ -38,7 +38,7 @@ namespace QLNet
          Calendar volcal = process_.blackVolatility().link.calendar();
 
          double s0 = process_.x0();
-         Utils.QL_REQUIRE(s0 > 0.0, () => "negative or null underlying");
+         Utils.QL_REQUIRE(s0 > Const.ZERO_DOUBLE, () => "negative or null underlying");
          double v = process_.blackVolatility().link.blackVol(arguments_.exercise.lastDate(), s0);
          Date maturityDate = arguments_.exercise.lastDate();
          double riskFreeRate = process_.riskFreeRate().link.zeroRate(maturityDate, rfdc, Compounding.Continuous, Frequency.NoFrequency).value();
@@ -54,7 +54,7 @@ namespace QLNet
             if (args.dividends[i].date() >= referenceDate)
                s0 -= args.dividends[i].amount() * process_.riskFreeRate().link.discount(args.dividends[i].date());
 
-            Utils.QL_REQUIRE(s0 > 0.0, () => "negative value after substracting dividends");
+            Utils.QL_REQUIRE(s0 > Const.ZERO_DOUBLE, () => "negative value after substracting dividends");
          }
 
          // binomial trees with constant coefficient
@@ -82,7 +82,7 @@ namespace QLNet
                                                                                      maturity, timeSteps_, creditSpread, v, q);
          DiscretizedConvertible convertible = new DiscretizedConvertible(args, bs, new TimeGrid(maturity, timeSteps_));
          convertible.initialize(lattice, maturity);
-         convertible.rollback(0.0);
+         convertible.rollback(Const.ZERO_DOUBLE);
          results_.value = convertible.presentValue();
 
          Utils.QL_REQUIRE(results_.value < double.MaxValue, () => "floating-point overflow on tree grid");

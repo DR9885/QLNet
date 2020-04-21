@@ -50,7 +50,7 @@ namespace QLNet
          if (settlementDate == null)
             settlementDate = bond.settlementDate();
 
-         return bond.notional(settlementDate).IsNotEqual(0.0);
+         return bond.notional(settlementDate).IsNotEqual(Const.ZERO_DOUBLE);
       }
 
       #endregion
@@ -224,7 +224,7 @@ namespace QLNet
                           " (maturity being " + bond.maturityDate() + ")",
                           QLNetExceptionEnum.NotTradableException);
 
-         return CashFlows.accruedAmount(bond.cashflows(), false, settlementDate) * 100.0 / bond.notional(settlementDate);
+         return CashFlows.accruedAmount(bond.cashflows(), false, settlementDate) * Const.ONE_HUNDRED_DOUBLE / bond.notional(settlementDate);
       }
 
       #endregion
@@ -243,7 +243,7 @@ namespace QLNet
                           QLNetExceptionEnum.NotTradableException);
 
          double dirtyPrice = CashFlows.npv(bond.cashflows(), discountCurve, false, settlementDate) *
-                             100.0 / bond.notional(settlementDate);
+                             Const.ONE_HUNDRED_DOUBLE / bond.notional(settlementDate);
          return dirtyPrice - bond.accruedAmount(settlementDate);
       }
       public static double bps(Bond bond, YieldTermStructure discountCurve, Date settlementDate = null)
@@ -256,7 +256,7 @@ namespace QLNet
                           " (maturity being " + bond.maturityDate() + ")",
                           QLNetExceptionEnum.NotTradableException);
 
-         return CashFlows.bps(bond.cashflows(), discountCurve, false, settlementDate) * 100.0 / bond.notional(settlementDate);
+         return CashFlows.bps(bond.cashflows(), discountCurve, false, settlementDate) * Const.ONE_HUNDRED_DOUBLE / bond.notional(settlementDate);
       }
       public static double atmRate(Bond bond, YieldTermStructure discountCurve, Date settlementDate = null, double? cleanPrice = null)
       {
@@ -270,7 +270,7 @@ namespace QLNet
 
          double ? dirtyPrice = cleanPrice == null ? null : cleanPrice + bond.accruedAmount(settlementDate);
          double currentNotional = bond.notional(settlementDate);
-         double? npv = dirtyPrice / 100.0 * currentNotional;
+         double? npv = dirtyPrice / Const.ONE_HUNDRED_DOUBLE * currentNotional;
 
          return CashFlows.atmRate(bond.cashflows(), discountCurve, false, settlementDate, settlementDate, npv);
       }
@@ -299,7 +299,7 @@ namespace QLNet
                           QLNetExceptionEnum.NotTradableException);
 
          double dirtyPrice = CashFlows.npv(bond.cashflows(), yield, false, settlementDate) *
-                             100.0 / bond.notional(settlementDate);
+                             Const.ONE_HUNDRED_DOUBLE / bond.notional(settlementDate);
          return dirtyPrice;
       }
       public static double dirtyPrice(Bond bond, double yield, DayCounter dayCounter, Compounding compounding, Frequency frequency,
@@ -318,7 +318,7 @@ namespace QLNet
                           QLNetExceptionEnum.NotTradableException);
 
          return CashFlows.bps(bond.cashflows(), yield, false, settlementDate) *
-                100.0 / bond.notional(settlementDate);
+                Const.ONE_HUNDRED_DOUBLE / bond.notional(settlementDate);
       }
       public static double bps(Bond bond, double yield, DayCounter dayCounter, Compounding compounding, Frequency frequency,
                                Date settlementDate = null)
@@ -326,7 +326,7 @@ namespace QLNet
          return bps(bond, new InterestRate(yield, dayCounter, compounding, frequency), settlementDate);
       }
       public static double yield(Bond bond, double cleanPrice, DayCounter dayCounter, Compounding compounding, Frequency frequency,
-                                 Date settlementDate = null, double accuracy = 1.0e-10, int maxIterations = 100, double guess = 0.05)
+                                 Date settlementDate = null, double accuracy = Const.ACCURACY_TEN, int maxIterations = Const.ONE_HUNDRED_INT, double guess = Const.FIVE_PERCENT)
       {
          if (settlementDate == null)
             settlementDate = bond.settlementDate();
@@ -337,7 +337,7 @@ namespace QLNet
                           QLNetExceptionEnum.NotTradableException);
 
          double dirtyPrice = cleanPrice + bond.accruedAmount(settlementDate);
-         dirtyPrice /= 100.0 / bond.notional(settlementDate);
+         dirtyPrice /= Const.ONE_HUNDRED_DOUBLE / bond.notional(settlementDate);
 
          return CashFlows.yield(bond.cashflows(), dirtyPrice,
                                 dayCounter, compounding, frequency,
@@ -431,12 +431,12 @@ namespace QLNet
                           QLNetExceptionEnum.NotTradableException);
 
          double dirtyPrice = CashFlows.npv(bond.cashflows(), discount, zSpread, dayCounter, compounding, frequency, false, settlementDate) *
-                             100.0 / bond.notional(settlementDate);
+                             Const.ONE_HUNDRED_DOUBLE / bond.notional(settlementDate);
          return dirtyPrice - bond.accruedAmount(settlementDate);
       }
       public static double zSpread(Bond bond, double cleanPrice, YieldTermStructure discount, DayCounter dayCounter, Compounding compounding,
-                                   Frequency frequency, Date settlementDate = null, double accuracy = 1.0e-10, int maxIterations = 100,
-                                   double guess = 0.0)
+                                   Frequency frequency, Date settlementDate = null, double accuracy = Const.ACCURACY_TEN, int maxIterations = Const.ONE_HUNDRED_INT,
+                                   double guess = Const.ZERO_DOUBLE)
       {
          if (settlementDate == null)
             settlementDate = bond.settlementDate();
@@ -447,7 +447,7 @@ namespace QLNet
                           QLNetExceptionEnum.NotTradableException);
 
          double dirtyPrice = cleanPrice + bond.accruedAmount(settlementDate);
-         dirtyPrice /= 100.0 / bond.notional(settlementDate);
+         dirtyPrice /= Const.ONE_HUNDRED_DOUBLE / bond.notional(settlementDate);
 
          return CashFlows.zSpread(bond.cashflows(),
                                   discount,
@@ -482,7 +482,7 @@ namespace QLNet
             wal += yearw;
          }
 
-         return today.AddDays(wal * 365).Date;
+         return today.AddDays(wal * Const.THREE_HUNDRED_SIXTY_FIVE_INT).Date;
       }
 
       #endregion

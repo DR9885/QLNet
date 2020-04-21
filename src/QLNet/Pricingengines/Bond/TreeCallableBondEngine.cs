@@ -82,7 +82,7 @@ namespace QLNet
 
          double redemptionTime = dayCounter.yearFraction(referenceDate, arguments_.redemptionDate);
          callableBond.initialize(lattice, redemptionTime);
-         callableBond.rollback(0.0);
+         callableBond.rollback(Const.ZERO_DOUBLE);
          results_.value = results_.settlementValue = callableBond.presentValue();
       }
 
