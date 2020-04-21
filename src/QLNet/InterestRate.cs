@@ -78,7 +78,7 @@ namespace QLNet
       /*! \warning Time must be measured using InterestRate's own
                    day counter.
       */
-      public double discountFactor(double t) { return 1.0 / compoundFactor(t); }
+      public double discountFactor(double t) { return Const.ONE_DOUBLE / compoundFactor(t); }
 
       //! discount factor implied by the rate compounded between two dates
       public double discountFactor(Date d1, Date d2, Date refStart = null, Date refEnd = null)
@@ -97,24 +97,24 @@ namespace QLNet
       */
       public double compoundFactor(double t)
       {
-         Utils.QL_REQUIRE(t >= 0.0, () => "negative time not allowed");
+         Utils.QL_REQUIRE(t >= Const.ZERO_DOUBLE, () => "negative time not allowed");
          Utils.QL_REQUIRE(r_ != null, () => "null interest rate");
          switch (comp_)
          {
             case Compounding.Simple:
-               return 1.0 + r_.Value * t;
+               return Const.ONE_DOUBLE + r_.Value * t;
             case Compounding.Compounded:
-               return Math.Pow(1.0 + r_.Value / freq_, freq_ * t);
+               return Math.Pow(Const.ONE_DOUBLE + r_.Value / freq_, freq_ * t);
             case Compounding.Continuous:
                return Math.Exp(r_.Value * t);
             case Compounding.SimpleThenCompounded:
-               if (t <= 1.0 / freq_)
-                  return 1.0 + r_.Value * t;
+               if (t <= Const.ONE_DOUBLE / freq_)
+                  return Const.ONE_DOUBLE + r_.Value * t;
                else
-                  return Math.Pow(1.0 + r_.Value / freq_, freq_ * t);
+                  return Math.Pow(Const.ONE_DOUBLE + r_.Value / freq_, freq_ * t);
             default:
                Utils.QL_FAIL("unknown compounding convention");
-               return 0;
+               return Const.ZERO_INT;
          }
       }
 
@@ -142,33 +142,33 @@ namespace QLNet
       */
       public static InterestRate impliedRate(double compound, DayCounter resultDC, Compounding comp, Frequency freq, double t)
       {
-         Utils.QL_REQUIRE(compound > 0.0, () => "positive compound factor required");
+         Utils.QL_REQUIRE(compound > Const.ZERO_DOUBLE, () => "positive compound factor required");
 
-         double r = 0;
-         if (compound.IsEqual(1.0))
+         double r = Const.ZERO_DOUBLE;
+         if (compound.IsEqual(Const.ONE_DOUBLE))
          {
-            Utils.QL_REQUIRE(t >= 0.0, () => "non negative time (" + t + ") required");
-            r = 0.0;
+            Utils.QL_REQUIRE(t >= Const.ZERO_DOUBLE, () => "non negative time (" + t + ") required");
+            r = Const.ZERO_DOUBLE;
          }
          else
          {
-            Utils.QL_REQUIRE(t > 0.0, () => "positive time (" + t + ") required");
+            Utils.QL_REQUIRE(t > Const.ZERO_DOUBLE, () => "positive time (" + t + ") required");
             switch (comp)
             {
                case Compounding.Simple:
-                  r = (compound - 1.0) / t;
+                  r = (compound - Const.ONE_DOUBLE) / t;
                   break;
                case Compounding.Compounded:
-                  r = (Math.Pow(compound, 1.0 / (((double)freq) * t)) - 1.0) * ((double)freq);
+                  r = (Math.Pow(compound, Const.ONE_DOUBLE / (((double)freq) * t)) - Const.ONE_DOUBLE) * ((double)freq);
                   break;
                case Compounding.Continuous:
                   r = Math.Log(compound) / t;
                   break;
                case Compounding.SimpleThenCompounded:
-                  if (t <= 1.0 / ((double)freq))
-                     r = (compound - 1.0) / t;
+                  if (t <= Const.ONE_DOUBLE / ((double)freq))
+                     r = (compound - Const.ONE_DOUBLE) / t;
                   else
-                     r = (Math.Pow(compound, 1.0 / (((double)freq) * t)) - 1.0) * ((double)freq);
+                     r = (Math.Pow(compound, Const.ONE_DOUBLE / (((double)freq) * t)) - Const.ONE_DOUBLE) * ((double)freq);
                   break;
                default:
                   Utils.QL_FAIL("unknown compounding convention (" + comp + ")");
@@ -256,7 +256,7 @@ namespace QLNet
                      break;
                   default:
                      result += "simple compounding up to "
-                               + 12 / (int)frequency() + " months, then "
+                               + Const.TWELVE_INT / (int)frequency() + " months, then "
                                + frequency() + " compounding";
                      break;
                }

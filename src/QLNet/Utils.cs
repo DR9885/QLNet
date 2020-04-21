@@ -26,13 +26,13 @@ namespace QLNet
    // here are extensions to IList to accomodate some QL functionality as well as have useful things for .net
    public static partial class Utils
    {
-      public static bool empty<T>(this IList<T> items) { return items.Count == 0; }
+      public static bool empty<T>(this IList<T> items) { return items.Count == Const.ZERO_INT; }
 
       // equivalent of ForEach but with the index
       public static void ForEach<T>(this IList<T> items, Action<int, T> action)
       {
          if (items != null && action != null)
-            for (int idx = 0; idx < items.Count; idx++)
+            for (int idx = Const.ZERO_INT; idx < items.Count; idx++)
                action(idx, items[idx]);
       }
 
@@ -43,7 +43,7 @@ namespace QLNet
       }
       public static T Get<T>(this List<T> v, int i, T defval)
       {
-         if (v == null || v.Count == 0)
+         if (v == null || v.Count == Const.ZERO_INT)
             return defval;
          else if (i >= v.Count)
             return v.Last();
@@ -58,7 +58,7 @@ namespace QLNet
       public static Nullable<T> Get<T>(this List<Nullable<T>> v, int i, Nullable<T> defval)
       where T : struct
       {
-         if (v == null || v.Count == 0)
+         if (v == null || v.Count == Const.ZERO_INT)
             return defval;
          else if (i >= v.Count)
             return v.Last();
@@ -99,13 +99,13 @@ namespace QLNet
       public static double Pow(double x, int y)
       {
          int n = Math.Abs(y);
-         double retval = 1;
+         double retval = Const.ONE_INT;
          for (; ; x *= x)
          {
-            if ((n & 1) != 0)
+            if ((n & Const.ONE_INT) != Const.ZERO_INT)
                retval *= x;
-            if ((n >>= 1) == 0)
-               return y < 0 ? 1 / retval : retval;
+            if ((n >>= Const.ONE_INT) == Const.ZERO_INT)
+               return y < Const.ZERO_INT ? Const.ONE_INT / retval : retval;
          }
       }
 
@@ -161,7 +161,7 @@ namespace QLNet
       {
          MethodInfo methodInfo;
          if (types == null)
-            types = new Type[0];
+            types = new Type[Const.ZERO_INT];
 #if NET452
          methodInfo =  t.GetType().GetMethod(function, types);
 #else
@@ -179,19 +179,19 @@ namespace QLNet
       public InitializedList() : base() { }
       public InitializedList(int size) : base(size)
       {
-         for (int i = 0; i < this.Capacity; i++)
+         for (int i = Const.ZERO_INT; i < this.Capacity; i++)
             this.Add(default(T) == null ? FastActivator<T>.Create() : default(T));
       }
       public InitializedList(int size, T value) : base(size)
       {
-         for (int i = 0; i < this.Capacity; i++)
+         for (int i = Const.ZERO_INT; i < this.Capacity; i++)
             this.Add(value);
       }
 
       // erases the contents without changing the size
       public void Erase()
       {
-         for (int i = 0; i < this.Count; i++)
+         for (int i = Const.ZERO_INT; i < this.Count; i++)
             this[i] = default(T);       // do we need to use "new T()" instead of default(T) when T is class?
       }
    }

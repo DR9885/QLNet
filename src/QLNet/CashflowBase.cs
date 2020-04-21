@@ -83,7 +83,7 @@ namespace QLNet
          {
             return false;
          }
-         return CompareTo(other) == 0;
+         return CompareTo(other) == Const.ZERO_INT;
       }
 
       public override int GetHashCode()
