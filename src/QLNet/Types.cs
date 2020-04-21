@@ -49,6 +49,8 @@ namespace QLNet
       public const int ZERO_INT = 0;
       public const int ONE_INT = 1;
       public const int TWO_INT = 2;
+      public const int THREE_INT = 3;
+      public const int FOUR_INT = 4;
       public const int EIGHT_INT = 8;
       public const int TWELVE_INT = 12;
       public const int ONE_HUNDRED_INT = 100;

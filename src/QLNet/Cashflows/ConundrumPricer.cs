@@ -366,7 +366,7 @@ namespace QLNet
                der2DenOfRfunztion += shapedSwapPaymentTimes_[i] * shapedSwapPaymentTimes_[i] * accruals_[i] * swapPaymentDiscounts_[i] * Math.Exp(-shapedSwapPaymentTimes_[i] * x);
             }
 
-            double denominator = Math.Pow(denOfRfunztion, 4);
+            double denominator = Math.Pow(denOfRfunztion, Const.FOUR_INT);
 
             double numOfDerR = Const.ZERO_INT;
             numOfDerR += shapedSwapPaymentTimes_.Last() * swapPaymentDiscounts_.Last() * Math.Exp(-shapedSwapPaymentTimes_.Last() * x) * denOfRfunztion;
@@ -393,7 +393,7 @@ namespace QLNet
          {
             double denOfZfunction = (Const.ONE_DOUBLE - discountRatio_ * Math.Exp(-shapedSwapPaymentTimes_.Last() * x));
             double derDenOfZfunction = shapedSwapPaymentTimes_.Last() * discountRatio_ * Math.Exp(-shapedSwapPaymentTimes_.Last() * x);
-            double denominator = Math.Pow(denOfZfunction, 4);
+            double denominator = Math.Pow(denOfZfunction, Const.FOUR_INT);
             if (denominator.IsEqual(Const.ZERO_INT))
                Utils.QL_FAIL("GFunctionWithShifts::der2Z_derX2: denominator == 0");
 
@@ -776,7 +776,7 @@ namespace QLNet
             upperBoundary = Math.Max(a, Math.Min(upperBoundary, hardUpperLimit_));
             if (upperBoundary > Const.TWO_INT * a)
             {
-               VariableChange variableChange = new VariableChange(integrand.value, a, upperBoundary, 3);
+               VariableChange variableChange = new VariableChange(integrand.value, a, upperBoundary, Const.THREE_INT);
                result = gaussKronrodNonAdaptive.value(variableChange.value, Const.ZERO_DOUBLE, Const.ONE_DOUBLE);
             }
             else
