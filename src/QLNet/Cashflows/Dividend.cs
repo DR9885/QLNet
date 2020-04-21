@@ -96,7 +96,7 @@ namespace QLNet
          QL_REQUIRE(dividendDates.Count == dividends.Count, () => "size mismatch between dividend dates and amounts");
 
          DividendSchedule items = new DividendSchedule();
-         for (int i = 0; i < dividendDates.Count; i++)
+         for (int i = Const.ZERO_INT; i < dividendDates.Count; i++)
             items.Add(new FixedDividend(dividends[i], dividendDates[i]));
          return items;
       }

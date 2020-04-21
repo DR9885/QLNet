@@ -60,7 +60,7 @@ namespace QLNet
          double I1 = index_.fixing(fixingDate_);
 
          if (growthOnly_)
-            return notional_ * (I1 / I0 - 1.0);
+            return notional_ * (I1 / I0 - Const.ONE_DOUBLE);
          else
             return notional_ * (I1 / I0);
 

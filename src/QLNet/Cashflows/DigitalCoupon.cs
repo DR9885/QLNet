@@ -88,22 +88,22 @@ namespace QLNet
             replication = new DigitalReplication();
 
          underlying_ = underlying;
-         callCsi_ = 0.0;
-         putCsi_ = 0.0;
+         callCsi_ = Const.ZERO_DOUBLE;
+         putCsi_ = Const.ZERO_DOUBLE;
          isCallATMIncluded_ = isCallATMIncluded;
          isPutATMIncluded_ = isPutATMIncluded;
          isCallCashOrNothing_ = false;
          isPutCashOrNothing_ = false;
-         callLeftEps_ = replication.gap() / 2.0;
-         callRightEps_ = replication.gap() / 2.0;
-         putLeftEps_ = replication.gap() / 2.0;
-         putRightEps_ = replication.gap() / 2.0;
+         callLeftEps_ = replication.gap() / Const.TWO_DOUBLE;
+         callRightEps_ = replication.gap() / Const.TWO_DOUBLE;
+         putLeftEps_ = replication.gap() / Const.TWO_DOUBLE;
+         putRightEps_ = replication.gap() / Const.TWO_DOUBLE;
          hasPutStrike_ = false;
          hasCallStrike_ = false;
          replicationType_ = replication.replicationType();
 
 
-         Utils.QL_REQUIRE(replication.gap() > 0.0, () => "Non positive epsilon not allowed");
+         Utils.QL_REQUIRE(replication.gap() > Const.ZERO_DOUBLE, () => "Non positive epsilon not allowed");
 
          if (putStrike == null)
             Utils.QL_REQUIRE(putDigitalPayoff == null, () => "Put Cash rate non allowed if put strike is null");
@@ -113,19 +113,19 @@ namespace QLNet
 
          if (callStrike != null)
          {
-            Utils.QL_REQUIRE(callStrike >= 0.0, () => "negative call strike not allowed");
+            Utils.QL_REQUIRE(callStrike >= Const.ZERO_DOUBLE, () => "negative call strike not allowed");
 
             hasCallStrike_ = true;
             callStrike_ = callStrike.GetValueOrDefault();
-            Utils.QL_REQUIRE(callStrike_ >= replication.gap() / 2.0, () => "call strike < eps/2");
+            Utils.QL_REQUIRE(callStrike_ >= replication.gap() / Const.TWO_DOUBLE, () => "call strike < eps/2");
 
             switch (callPosition)
             {
                case Position.Type.Long:
-                  callCsi_ = 1.0;
+                  callCsi_ = Const.ONE_DOUBLE;
                   break;
                case Position.Type.Short:
-                  callCsi_ = -1.0;
+                  callCsi_ = Const.NEGATIVE_ONE_DOUBLE;
                   break;
                default:
                   Utils.QL_FAIL("unsupported position type");
@@ -139,16 +139,16 @@ namespace QLNet
          }
          if (putStrike != null)
          {
-            Utils.QL_REQUIRE(putStrike >= 0.0, () => "negative put strike not allowed");
+            Utils.QL_REQUIRE(putStrike >= Const.ZERO_DOUBLE, () => "negative put strike not allowed");
             hasPutStrike_ = true;
             putStrike_ = putStrike.GetValueOrDefault();
             switch (putPosition)
             {
                case Position.Type.Long:
-                  putCsi_ = 1.0;
+                  putCsi_ = Const.ONE_DOUBLE;
                   break;
                case Position.Type.Short:
-                  putCsi_ = -1.0;
+                  putCsi_ = Const.NEGATIVE_ONE_DOUBLE;
                   break;
                default:
                   Utils.QL_FAIL("unsupported position type");
@@ -172,12 +172,12 @@ namespace QLNet
                   switch (callPosition)
                   {
                      case Position.Type.Long:
-                        callLeftEps_ = 0.0;
+                        callLeftEps_ = Const.ZERO_DOUBLE;
                         callRightEps_ = replication.gap();
                         break;
                      case Position.Type.Short:
                         callLeftEps_ = replication.gap();
-                        callRightEps_ = 0.0;
+                        callRightEps_ = Const.ZERO_DOUBLE;
                         break;
                      default:
                         Utils.QL_FAIL("unsupported position type");
@@ -190,10 +190,10 @@ namespace QLNet
                   {
                      case Position.Type.Long:
                         putLeftEps_ = replication.gap();
-                        putRightEps_ = 0.0;
+                        putRightEps_ = Const.ZERO_DOUBLE;
                         break;
                      case Position.Type.Short:
-                        putLeftEps_ = 0.0;
+                        putLeftEps_ = Const.ZERO_DOUBLE;
                         putRightEps_ = replication.gap();
                         break;
                      default:
@@ -209,10 +209,10 @@ namespace QLNet
                   {
                      case Position.Type.Long:
                         callLeftEps_ = replication.gap();
-                        callRightEps_ = 0.0;
+                        callRightEps_ = Const.ZERO_DOUBLE;
                         break;
                      case Position.Type.Short:
-                        callLeftEps_ = 0.0;
+                        callLeftEps_ = Const.ZERO_DOUBLE;
                         callRightEps_ = replication.gap();
                         break;
                      default:
@@ -225,12 +225,12 @@ namespace QLNet
                   switch (putPosition)
                   {
                      case Position.Type.Long:
-                        putLeftEps_ = 0.0;
+                        putLeftEps_ = Const.ZERO_DOUBLE;
                         putRightEps_ = replication.gap();
                         break;
                      case Position.Type.Short:
                         putLeftEps_ = replication.gap();
-                        putRightEps_ = 0.0;
+                        putRightEps_ = Const.ZERO_DOUBLE;
                         break;
                      default:
                         Utils.QL_FAIL("unsupported position type");
@@ -321,11 +321,11 @@ namespace QLNet
       }
       public bool isLongPut()
       {
-         return putCsi_.IsEqual(1.0);
+         return putCsi_.IsEqual(Const.ONE_DOUBLE);
       }
       public bool isLongCall()
       {
-         return callCsi_.IsEqual(1.0);
+         return callCsi_.IsEqual(Const.ONE_DOUBLE);
       }
       public FloatingRateCoupon underlying()
       {
@@ -337,7 +337,7 @@ namespace QLNet
       public double callOptionRate()
       {
 
-         double callOptionRate = 0.0;
+         double callOptionRate = Const.ZERO_DOUBLE;
          if (hasCallStrike_)
          {
             // Step function
@@ -362,7 +362,7 @@ namespace QLNet
       public double putOptionRate()
       {
 
-         double putOptionRate = 0.0;
+         double putOptionRate = Const.ZERO_DOUBLE;
          if (hasPutStrike_)
          {
             // Step function
@@ -436,17 +436,17 @@ namespace QLNet
       private double callPayoff()
       {
          // to use only if index has fixed
-         double payoff = 0.0;
+         double payoff = Const.ZERO_DOUBLE;
          if (hasCallStrike_)
          {
             double underlyingRate = underlying_.rate();
-            if ((underlyingRate - callStrike_) > 1.0e-16)
+            if ((underlyingRate - callStrike_) > Const.ACCURACY_SIXTEEN)
             {
                payoff = isCallCashOrNothing_ ? callDigitalPayoff_ : underlyingRate;
             }
             else
             {
-               if (isCallATMIncluded_ && Math.Abs(callStrike_ - underlyingRate) <= 1.0e-16)
+               if (isCallATMIncluded_ && Math.Abs(callStrike_ - underlyingRate) <= Const.ACCURACY_SIXTEEN)
                   payoff = isCallCashOrNothing_ ? callDigitalPayoff_ : underlyingRate;
             }
          }
@@ -455,11 +455,11 @@ namespace QLNet
       private double putPayoff()
       {
          // to use only if index has fixed
-         double payoff = 0.0;
+         double payoff = Const.ZERO_DOUBLE;
          if (hasPutStrike_)
          {
             double underlyingRate = underlying_.rate();
-            if ((putStrike_ - underlyingRate) > 1.0e-16)
+            if ((putStrike_ - underlyingRate) > Const.ACCURACY_SIXTEEN)
             {
                payoff = isPutCashOrNothing_ ? putDigitalPayoff_ : underlyingRate;
             }
@@ -468,7 +468,7 @@ namespace QLNet
                // putStrike_ <= underlyingRate
                if (isPutATMIncluded_)
                {
-                  if (Math.Abs(putStrike_ - underlyingRate) <= 1.0e-16)
+                  if (Math.Abs(putStrike_ - underlyingRate) <= Const.ACCURACY_SIXTEEN)
                      payoff = isPutCashOrNothing_ ? putDigitalPayoff_ : underlyingRate;
                }
             }

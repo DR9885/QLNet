@@ -34,8 +34,8 @@ namespace QLNet
                         Date endDate,
                         int fixingDays,
                         IborIndex iborIndex,
-                        double gearing = 1.0,
-                        double spread = 0.0,
+                        double gearing = Const.ONE_DOUBLE,
+                        double spread = Const.ZERO_DOUBLE,
                         Date refPeriodStart = null,
                         Date refPeriodEnd = null,
                         DayCounter dayCounter = null,
@@ -67,7 +67,7 @@ namespace QLNet
 
          DayCounter dc = index_.dayCounter();
          spanningTime_ = dc.yearFraction(fixingValueDate_, fixingEndDate_);
-         Utils.QL_REQUIRE(spanningTime_ > 0.0, () =>
+         Utils.QL_REQUIRE(spanningTime_ > Const.ZERO_DOUBLE, () =>
                           "\n cannot calculate forward rate between " +
                           fixingValueDate_ + " and " + fixingEndDate_ +
                           ":\n non positive time (" + spanningTime_ +
@@ -149,7 +149,7 @@ namespace QLNet
                                        paymentAdjustment_, fixingDays_, gearings_, spreads_,
                                        caps_, floors_, inArrears_, zeroPayments_);
 
-         if (caps_.Count == 0 && floors_.Count == 0 && !inArrears_)
+         if (caps_.Count == Const.ZERO_INT && floors_.Count == Const.ZERO_INT && !inArrears_)
          {
             Utils.setCouponPricer(cashflows, new BlackIborCouponPricer());
          }

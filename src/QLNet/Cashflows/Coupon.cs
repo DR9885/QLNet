@@ -88,7 +88,7 @@ namespace QLNet
       public double accruedPeriod(Date d)
       {
          if (d <= accrualStartDate_ || d > paymentDate_)
-            return 0.0;
+            return Const.ZERO_DOUBLE;
          else
             return dayCounter().yearFraction(accrualStartDate_,
                                              Date.Min(d, accrualEndDate_),
@@ -100,7 +100,7 @@ namespace QLNet
       public int accruedDays(Date d)
       {
          if (d <= accrualStartDate_ || d > paymentDate_)
-            return 0;
+            return Const.ZERO_INT;
          else
             return dayCounter().dayCount(accrualStartDate_, Date.Min(d, accrualEndDate_));
       }

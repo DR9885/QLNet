@@ -46,12 +46,43 @@ namespace QLNet
 
       public const double BASIS_POINT = 1.0e-4;
 
-      public static int ZERO_INT = 0;
-      public static int ONE_INT = 1;
-      public static int TWELVE_INT = 12;
+      public const int ZERO_INT = 0;
+      public const int ONE_INT = 1;
+      public const int TWO_INT = 2;
+      public const int EIGHT_INT = 8;
+      public const int TWELVE_INT = 12;
+      public const int ONE_HUNDRED_INT = 100;
+      public const int ONE_THOUSAND_INT = 1000;
+      public const int FIVE_THOUSAND_INT = 5000;
+      public const int ONE_HUNDRED_THOUSAND_INT = 100000;
+      public const int ONE_MILLION_INT = 1000000;
 
-      public static int ZERO_DOUBLE = 0;
-      public static int ONE_DOUBLE = 1;
+      public const double NEGATIVE_ONE_DOUBLE = -1.0;
+      public const double ZERO_DOUBLE = 0.0;
+      public const double ONE_DOUBLE = 1.0;
+      public const double TWO_DOUBLE = 2.0;
+      public const double THREE_DOUBLE = 3.0;
+      public const double TEN_DOUBLE = 10.0;
+      public const double TWENTY_DOUBLE = 20.0;
+      public const double ONE_HUNDRED_DOUBLE = 100.0;
+
+      public const double ACCURACY_FOUR = 1.0e-4;
+      public const double ACCURACY_FIVE = 1.0e-5;
+      public const double ACCURACY_SIX = 1.0e-6;
+      public const double ACCURACY_EIGHT = 1.0e-8;
+      public const double ACCURACY_TEN = 1.0e-10;
+      public const double ACCURACY_TWELVE = 1.0e-12;
+      public const double ACCURACY_FOURTEEN = 1.0e-14;
+      public const double ACCURACY_SIXTEEN = 1.0e-16;
+
+      public const double ONE_TEN_THOUSANDTH = 0.0001;
+      public const double ONE_PERCENT = 0.01;
+      public const double THREE_PERCENT = 0.03;
+      public const double FIVE_PERCENT = 0.05;
+      public const double FIFTY_PERCENT = 0.5;
+      public const double TWENTY_PERCENT = 0.5;
+      public const double NINTY_NINE_PERCENT = 0.99;
+      public const double ONE_HUNDRED_FIFTY_PERCENT = 1.5;
    }
 
    public class TimeSeries<T> : IDictionary<Date, T>

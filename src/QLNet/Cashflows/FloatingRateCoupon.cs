@@ -39,8 +39,8 @@ namespace QLNet
                                 Date endDate,
                                 int fixingDays,
                                 InterestRateIndex index,
-                                double gearing = 1.0,
-                                double spread = 0.0,
+                                double gearing = Const.ONE_DOUBLE,
+                                double spread = Const.ZERO_DOUBLE,
                                 Date refPeriodStart = null,
                                 Date refPeriodEnd = null,
                                 DayCounter dayCounter = null,
@@ -54,7 +54,7 @@ namespace QLNet
          spread_ = spread;
          isInArrears_ = isInArrears;
 
-         if (gearing_.IsEqual(0))
+         if (gearing_.IsEqual(Const.ZERO_INT))
             throw new ArgumentException("Null gearing not allowed");
 
          if (dayCounter_.empty())
@@ -108,7 +108,7 @@ namespace QLNet
       {
          if (d <= accrualStartDate_ || d > paymentDate_)
          {
-            return 0;
+            return Const.ZERO_INT;
          }
          else
          {
@@ -153,7 +153,7 @@ namespace QLNet
       //! convexity adjustment for the given index fixing
       protected double convexityAdjustmentImpl(double f)
       {
-         return (gearing().IsEqual(0.0) ? 0.0 : adjustedFixing - f);
+         return (gearing().IsEqual(Const.ZERO_DOUBLE) ? Const.ZERO_DOUBLE : adjustedFixing - f);
       }
 
       //! convexity adjustment

@@ -24,9 +24,9 @@ namespace QLNet
    /// <summary>
    /// Capped and/or floored floating-rate coupon
    /// <remarks>
-   /// The payoff P of a capped floating-rate coupon is: P=N×T×min(aL+b,C).
-   /// The payoff of a floored floating-rate coupon is:  P=N×T×max(aL+b,F).
-   /// The payoff of a collared floating-rate coupon is: P=N×T×min(max(aL+b,F),C).
+   /// The payoff P of a capped floating-rate coupon is: P=Nï¿½Tï¿½min(aL+b,C).
+   /// The payoff of a floored floating-rate coupon is:  P=Nï¿½Tï¿½max(aL+b,F).
+   /// The payoff of a collared floating-rate coupon is: P=Nï¿½Tï¿½min(max(aL+b,F),C).
    /// where N is the notional, T is the accrual time, L is the floating rate, a is its gearing, b is the spread, and C and F the strikes.
    /// They can be decomposed in the following manner. Decomposition of a capped floating rate coupon:
    /// R=min(aL+b,C)=(aL+b)+min(C?b??|a|L,0)
@@ -52,7 +52,7 @@ namespace QLNet
          isCapped_ = false;
          isFloored_ = false;
 
-         if (gearing_ > 0)
+         if (gearing_ > Const.ZERO_INT)
          {
             if (cap != null)
             {
@@ -91,10 +91,10 @@ namespace QLNet
          Utils.QL_REQUIRE(underlying_.pricer() != null, () => "pricer not set");
 
          double swapletRate = underlying_.rate();
-         double floorletRate = 0.0;
+         double floorletRate = Const.ZERO_DOUBLE;
          if (isFloored_)
             floorletRate = underlying_.pricer().floorletRate(effectiveFloor().Value);
-         double capletRate = 0.0;
+         double capletRate = Const.ZERO_DOUBLE;
          if (isCapped_)
             capletRate = underlying_.pricer().capletRate(effectiveCap().Value);
          return swapletRate + floorletRate - capletRate;
@@ -106,20 +106,20 @@ namespace QLNet
       // cap
       public double cap()
       {
-         if ((gearing_ > 0) && isCapped_)
+         if ((gearing_ > Const.ZERO_INT) && isCapped_)
             return cap_.GetValueOrDefault();
-         if ((gearing_ < 0) && isFloored_)
+         if ((gearing_ < Const.ZERO_INT) && isFloored_)
             return floor_.GetValueOrDefault();
-         return 0.0;
+         return Const.ZERO_DOUBLE;
       }
       //! floor
       public double floor()
       {
-         if ((gearing_ > 0) && isFloored_)
+         if ((gearing_ > Const.ZERO_INT) && isFloored_)
             return floor_.GetValueOrDefault();
-         if ((gearing_ < 0) && isCapped_)
+         if ((gearing_ < Const.ZERO_INT) && isCapped_)
             return cap_.GetValueOrDefault();
-         return 0.0;
+         return Const.ZERO_DOUBLE;
       }
       //! effective cap of fixing
       public double? effectiveCap()
@@ -166,8 +166,8 @@ namespace QLNet
                                      Date endDate,
                                      int fixingDays,
                                      IborIndex index,
-                                     double gearing = 1.0,
-                                     double spread = 0.0,
+                                     double gearing = Const.ONE_DOUBLE,
+                                     double spread = Const.ZERO_DOUBLE,
                                      double? cap = null,
                                      double? floor = null,
                                      Date refPeriodStart = null,
@@ -196,8 +196,8 @@ namespace QLNet
                                     Date endDate,
                                     int fixingDays,
                                     SwapIndex index,
-                                    double gearing = 1.0,
-                                    double spread = 0.0,
+                                    double gearing = Const.ONE_DOUBLE,
+                                    double spread = Const.ZERO_DOUBLE,
                                     double? cap = null,
                                     double? floor = null,
                                     Date refPeriodStart = null,

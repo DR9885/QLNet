@@ -68,7 +68,7 @@ namespace QLNet
       {
          if (d <= accrualStartDate_ || d > paymentDate_)
          {
-            return 0.0;
+            return Const.ZERO_DOUBLE;
          }
          else
          {

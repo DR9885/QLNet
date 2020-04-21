@@ -50,7 +50,7 @@ namespace QLNet
          if (amount_ != null)
             return amount_.Value;
 
-         return nominal() * (rate_.compoundFactor(accrualStartDate_, accrualEndDate_, refPeriodStart_, refPeriodEnd_) - 1.0);
+         return nominal() * (rate_.compoundFactor(accrualStartDate_, accrualEndDate_, refPeriodStart_, refPeriodEnd_) - Const.ONE_DOUBLE);
       }
 
       //! Coupon interface
@@ -60,17 +60,17 @@ namespace QLNet
       public override double accruedAmount(Date d)
       {
          if (d <= accrualStartDate_ || d > paymentDate_)
-            return 0;
+            return Const.ZERO_INT;
          else if (tradingExCoupon(d))
          {
             return -nominal() * (rate_.compoundFactor(d,
                                                       accrualEndDate_,
                                                       refPeriodStart_,
-                                                      refPeriodEnd_) - 1.0);
+                                                      refPeriodEnd_) - Const.ONE_DOUBLE);
          }
          else
             return nominal() * (rate_.compoundFactor(accrualStartDate_, Date.Min(d, accrualEndDate_),
-                                                     refPeriodStart_, refPeriodEnd_) - 1.0);
+                                                     refPeriodStart_, refPeriodEnd_) - Const.ONE_DOUBLE);
       }
 
       private InterestRate rate_;
@@ -179,9 +179,9 @@ namespace QLNet
       public override List<CashFlow> value()
       {
 
-         if (couponRates_.Count == 0)
+         if (couponRates_.Count == Const.ZERO_INT)
             throw new ArgumentException("no coupon rates given");
-         if (notionals_.Count == 0)
+         if (notionals_.Count == Const.ZERO_INT)
             throw new ArgumentException("no nominals given");
 
          List<CashFlow> leg = new List<CashFlow>();
@@ -189,11 +189,11 @@ namespace QLNet
          Calendar schCalendar = schedule_.calendar();
 
          // first period might be short or long
-         Date start = schedule_[0], end = schedule_[1];
+         Date start = schedule_[Const.ZERO_INT], end = schedule_[Const.ONE_INT];
          Date paymentDate = calendar_.adjust(end, paymentAdjustment_);
          Date exCouponDate = null;
-         InterestRate rate = couponRates_[0];
-         double nominal = notionals_[0];
+         InterestRate rate = couponRates_[Const.ZERO_INT];
+         double nominal = notionals_[Const.ZERO_INT];
 
          if (exCouponPeriod_ != null)
          {
@@ -202,7 +202,7 @@ namespace QLNet
                                                      exCouponAdjustment_,
                                                      exCouponEndOfMonth_);
          }
-         if (schedule_.isRegular(1))
+         if (schedule_.isRegular(Const.ONE_INT))
          {
             if (!(firstPeriodDC_ == null || firstPeriodDC_ == rate.dayCounter()))
                throw new ArgumentException("regular first coupon does not allow a first-period day count");
@@ -219,7 +219,7 @@ namespace QLNet
          }
 
          // regular periods
-         for (int i = 2; i < schedule_.Count - 1; ++i)
+         for (int i = Const.TWO_INT; i < schedule_.Count - Const.ONE_INT; ++i)
          {
             start = end; end = schedule_[i];
             paymentDate = calendar_.adjust(end, paymentAdjustment_);
@@ -230,23 +230,23 @@ namespace QLNet
                                                         exCouponAdjustment_,
                                                         exCouponEndOfMonth_);
             }
-            if ((i - 1) < couponRates_.Count)
-               rate = couponRates_[i - 1];
+            if ((i - Const.ONE_INT) < couponRates_.Count)
+               rate = couponRates_[i - Const.ONE_INT];
             else
                rate = couponRates_.Last();
-            if ((i - 1) < notionals_.Count)
-               nominal = notionals_[i - 1];
+            if ((i - Const.ONE_INT) < notionals_.Count)
+               nominal = notionals_[i - Const.ONE_INT];
             else
                nominal = notionals_.Last();
 
             leg.Add(new FixedRateCoupon(paymentDate, nominal, rate, start, end, start, end, exCouponDate));
          }
 
-         if (schedule_.Count > 2)
+         if (schedule_.Count > Const.TWO_INT)
          {
             // last period might be short or long
             int N = schedule_.Count;
-            start = end; end = schedule_[N - 1];
+            start = end; end = schedule_[N - Const.ONE_INT];
             paymentDate = calendar_.adjust(end, paymentAdjustment_);
             if (exCouponPeriod_ != null)
             {
@@ -256,18 +256,18 @@ namespace QLNet
                                                         exCouponEndOfMonth_);
             }
 
-            if ((N - 2) < couponRates_.Count)
-               rate = couponRates_[N - 2];
+            if ((N - Const.TWO_INT) < couponRates_.Count)
+               rate = couponRates_[N - Const.TWO_INT];
             else
                rate = couponRates_.Last();
-            if ((N - 2) < notionals_.Count)
-               nominal = notionals_[N - 2];
+            if ((N - Const.TWO_INT) < notionals_.Count)
+               nominal = notionals_[N - Const.TWO_INT];
             else
                nominal = notionals_.Last();
 
             InterestRate r = new InterestRate(rate.rate(),
                                               lastPeriodDC_ == null ? rate.dayCounter() : lastPeriodDC_, rate.compounding(), rate.frequency());
-            if (schedule_.isRegular(N - 1))
+            if (schedule_.isRegular(N - Const.ONE_INT))
                leg.Add(new FixedRateCoupon(paymentDate, nominal, r, start, end, start, end, exCouponDate));
             else
             {

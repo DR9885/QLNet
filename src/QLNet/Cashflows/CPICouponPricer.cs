@@ -95,7 +95,7 @@ namespace QLNet
          // past or future fixing is managed in YoYInflationIndex::fixing()
          // use yield curve from index (which sets discount)
 
-         discount_ = 1.0;
+         discount_ = Const.ONE_DOUBLE;
          if (paymentDate_ > rateCurve_.link.referenceDate())
             discount_ = rateCurve_.link.discount(paymentDate_);
 
@@ -120,7 +120,7 @@ namespace QLNet
                a = effStrike;
                b = coupon_.indexFixing();
             }
-            return Math.Max(a - b, 0.0) * coupon_.accrualPeriod() * discount_;
+            return Math.Max(a - b, Const.ZERO_DOUBLE) * coupon_.accrualPeriod() * discount_;
          }
          else
          {

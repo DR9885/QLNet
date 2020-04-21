@@ -72,20 +72,20 @@ namespace QLNet
          // the following is not always correct
          Calendar calendar = schedule.calendar();
 
-         Date lastPaymentDate = calendar.adjust(schedule[n - 1], paymentAdj);
+         Date lastPaymentDate = calendar.adjust(schedule[n - Const.ONE_INT], paymentAdj);
 
-         for (int i = 0; i < n - 1; ++i)
+         for (int i = Const.ZERO_INT; i < n - Const.ONE_INT; ++i)
          {
             Date refStart, start, refEnd, end;
             refStart = start = schedule[i];
-            refEnd = end = schedule[i + 1];
+            refEnd = end = schedule[i + Const.ONE_INT];
             Date paymentDate = isZero ? lastPaymentDate : calendar.adjust(end, paymentAdj);
-            if (i == 0 && !schedule.isRegular(i + 1))
+            if (i == Const.ZERO_INT && !schedule.isRegular(i + Const.ONE_INT))
                refStart = calendar.adjust(end - schedule.tenor(), schedule.businessDayConvention());
-            if (i == n - 1 && !schedule.isRegular(i + 1))
+            if (i == n - Const.ONE_INT && !schedule.isRegular(i + Const.ONE_INT))
                refEnd = calendar.adjust(start + schedule.tenor(), schedule.businessDayConvention());
 
-            if (Utils.Get(gearings, i, 1).IsEqual(0.0))
+            if (Utils.Get(gearings, i, Const.ONE_INT).IsEqual(Const.ZERO_DOUBLE))
             {
                // fixed coupon
                leg.Add(new FixedRateCoupon(paymentDate, Utils.Get(nominals, i),
@@ -102,7 +102,7 @@ namespace QLNet
                              paymentDate, start, end,
                              Utils.Get(fixingDays, i, index.fixingDays()),
                              index,
-                             Utils.Get(gearings, i, 1),
+                             Utils.Get(gearings, i, Const.ONE_INT),
                              Utils.Get(spreads, i),
                              refStart, refEnd, paymentDayCounter,
                              isInArrears));
@@ -114,7 +114,7 @@ namespace QLNet
                              paymentDate, start, end,
                              Utils.Get(fixingDays, i, index.fixingDays()),
                              index,
-                             Utils.Get(gearings, i, 1),
+                             Utils.Get(gearings, i, Const.ONE_INT),
                              Utils.Get(spreads, i),
                              Utils.toNullable(Utils.Get(caps, i, Double.MinValue)),
                              Utils.toNullable(Utils.Get(floors, i, Double.MinValue)),
@@ -169,26 +169,26 @@ namespace QLNet
          Date refStart, start, refEnd, end;
          Date paymentDate;
 
-         for (int i = 0; i < n; ++i)
+         for (int i = Const.ZERO_INT; i < n; ++i)
          {
             refStart = start = schedule.date(i);
-            refEnd = end = schedule.date(i + 1);
+            refEnd = end = schedule.date(i + Const.ONE_INT);
             paymentDate = calendar.adjust(end, paymentAdj);
-            if (i == 0 && !schedule.isRegular(i + 1))
+            if (i == Const.ZERO_INT && !schedule.isRegular(i + Const.ONE_INT))
             {
                BusinessDayConvention bdc = schedule.businessDayConvention();
                refStart = calendar.adjust(end - schedule.tenor(), bdc);
             }
-            if (i == n - 1 && !schedule.isRegular(i + 1))
+            if (i == n - Const.ONE_INT && !schedule.isRegular(i + Const.ONE_INT))
             {
                BusinessDayConvention bdc = schedule.businessDayConvention();
                refEnd = calendar.adjust(start + schedule.tenor(), bdc);
             }
-            if (Utils.Get(gearings, i, 1.0).IsEqual(0.0))
+            if (Utils.Get(gearings, i, Const.ONE_DOUBLE).IsEqual(Const.ZERO_DOUBLE))
             {
                // fixed coupon
-               leg.Add(new FixedRateCoupon(paymentDate, Utils.Get(nominals, i, 1.0),
-                                           Utils.Get(spreads, i, 1.0),
+               leg.Add(new FixedRateCoupon(paymentDate, Utils.Get(nominals, i, Const.ONE_DOUBLE),
+                                           Utils.Get(spreads, i, Const.ONE_DOUBLE),
                                            paymentDayCounter,
                                            start, end, refStart, refEnd));
             }
@@ -196,12 +196,12 @@ namespace QLNet
             {
                // floating digital coupon
                FloatingCouponType underlying = FastActivator<FloatingCouponType>.Create().factory(
-                                                  Utils.Get(nominals, i, 1.0),
+                                                  Utils.Get(nominals, i, Const.ONE_DOUBLE),
                                                   paymentDate, start, end,
                                                   Utils.Get(fixingDays, i, index.fixingDays()),
                                                   index,
-                                                  Utils.Get(gearings, i, 1.0),
-                                                  Utils.Get(spreads, i, 0.0),
+                                                  Utils.Get(gearings, i, Const.ONE_DOUBLE),
+                                                  Utils.Get(spreads, i, Const.ZERO_DOUBLE),
                                                   refStart, refEnd,
                                                   paymentDayCounter, isInArrears) as FloatingCouponType;
 
@@ -242,22 +242,22 @@ namespace QLNet
          Date paymentDate;
 
          int n = schedule.Count;
-         for (int i = 0; i < n - 1; ++i)
+         for (int i = Const.ZERO_INT; i < n - Const.ONE_INT; ++i)
          {
             refStart = start = schedule.date(i);
-            refEnd = end = schedule.date(i + 1);
+            refEnd = end = schedule.date(i + Const.ONE_INT);
             paymentDate = calendar.adjust(end, paymentAdjustment);
-            if (i == 0 && !schedule.isRegular(i + 1))
+            if (i == Const.ZERO_INT && !schedule.isRegular(i + Const.ONE_INT))
                refStart = calendar.adjust(end - schedule.tenor(), paymentAdjustment);
-            if (i == n - 1 && !schedule.isRegular(i + 1))
+            if (i == n - Const.ONE_INT && !schedule.isRegular(i + Const.ONE_INT))
                refEnd = calendar.adjust(start + schedule.tenor(), paymentAdjustment);
 
             leg.Add(new OvernightIndexedCoupon(paymentDate,
                                                Utils.Get(nominals, i),
                                                start, end,
                                                overnightIndex,
-                                               Utils.Get(gearings, i, 1.0),
-                                               Utils.Get(spreads, i, 0.0),
+                                               Utils.Get(gearings, i, Const.ONE_DOUBLE),
+                                               Utils.Get(spreads, i, Const.ZERO_DOUBLE),
                                                refStart, refEnd,
                                                paymentDayCounter));
          }
@@ -277,7 +277,7 @@ namespace QLNet
                                                    List<int> fixingDays_,
                                                    Period observationLag_)
       {
-         int n = schedule_.Count - 1;
+         int n = schedule_.Count - Const.ONE_INT;
 
          Utils.QL_REQUIRE(!notionals_.empty(), () => "no notional given");
          Utils.QL_REQUIRE(notionals_.Count <= n, () => "too many nominals (" + notionals_.Count + "), only " + n + " required");
@@ -297,25 +297,25 @@ namespace QLNet
 
          Date refStart, start, refEnd, end;
 
-         for (int i = 0; i < n; ++i)
+         for (int i = Const.ZERO_INT; i < n; ++i)
          {
             refStart = start = schedule_.date(i);
-            refEnd = end = schedule_.date(i + 1);
+            refEnd = end = schedule_.date(i + Const.ONE_INT);
             Date paymentDate = calendar.adjust(end, paymentAdjustment_);
-            if (i == 0 && !schedule_.isRegular(i + 1))
+            if (i == Const.ZERO_INT && !schedule_.isRegular(i + Const.ONE_INT))
             {
                BusinessDayConvention bdc = schedule_.businessDayConvention();
                refStart = schedule_.calendar().adjust(end - schedule_.tenor(), bdc);
             }
-            if (i == n - 1 && !schedule_.isRegular(i + 1))
+            if (i == n - Const.ONE_INT && !schedule_.isRegular(i + Const.ONE_INT))
             {
                BusinessDayConvention bdc = schedule_.businessDayConvention();
                refEnd = schedule_.calendar().adjust(start + schedule_.tenor(), bdc);
             }
-            if (Utils.Get(gearings_, i, 1.0).IsEqual(0.0))
+            if (Utils.Get(gearings_, i, Const.ONE_DOUBLE).IsEqual(Const.ZERO_DOUBLE))
             {
                // fixed coupon
-               leg.Add(new FixedRateCoupon(paymentDate, Utils.Get(notionals_, i, 1.0),
+               leg.Add(new FixedRateCoupon(paymentDate, Utils.Get(notionals_, i, Const.ONE_DOUBLE),
                                            Utils.effectiveFixedRate(spreads_, caps_, floors_, i),
                                            paymentDayCounter_,
                                            start, end, refStart, refEnd));
@@ -327,14 +327,14 @@ namespace QLNet
                {
                   // just swaplet
                   YoYInflationCoupon coup = new YoYInflationCoupon(paymentDate,
-                                                                   Utils.Get(notionals_, i, 1.0),
+                                                                   Utils.Get(notionals_, i, Const.ONE_DOUBLE),
                                                                    start, end,
-                                                                   Utils.Get(fixingDays_, i, 0),
+                                                                   Utils.Get(fixingDays_, i, Const.ZERO_INT),
                                                                    index_,
                                                                    observationLag_,
                                                                    paymentDayCounter_,
-                                                                   Utils.Get(gearings_, i, 1.0),
-                                                                   Utils.Get(spreads_, i, 0.0),
+                                                                   Utils.Get(gearings_, i, Const.ONE_DOUBLE),
+                                                                   Utils.Get(spreads_, i, Const.ZERO_DOUBLE),
                                                                    refStart, refEnd);
 
                   // in this case you can set a pricer
@@ -348,14 +348,14 @@ namespace QLNet
                   // cap/floorlet
                   leg.Add(new CappedFlooredYoYInflationCoupon(
                              paymentDate,
-                             Utils.Get(notionals_, i, 1.0),
+                             Utils.Get(notionals_, i, Const.ONE_DOUBLE),
                              start, end,
-                             Utils.Get(fixingDays_, i, 0),
+                             Utils.Get(fixingDays_, i, Const.ZERO_INT),
                              index_,
                              observationLag_,
                              paymentDayCounter_,
-                             Utils.Get(gearings_, i, 1.0),
-                             Utils.Get(spreads_, i, 0.0),
+                             Utils.Get(gearings_, i, Const.ONE_DOUBLE),
+                             Utils.Get(spreads_, i, Const.ZERO_DOUBLE),
                              Utils.toNullable(Utils.Get(caps_, i, Double.MinValue)),
                              Utils.toNullable(Utils.Get(floors_, i, Double.MinValue)),
                              refStart, refEnd));

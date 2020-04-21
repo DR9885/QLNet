@@ -40,9 +40,9 @@ namespace QLNet
          List<double> dt = coupon_.dt();
 
          int n = dt.Count;
-         int i = 0;
+         int i = Const.ZERO_INT;
 
-         double compoundFactor = 1.0;
+         double compoundFactor = Const.ONE_DOUBLE;
 
          // already fixed part
          Date today = Settings.evaluationDate();
@@ -53,7 +53,7 @@ namespace QLNet
 
             Utils.QL_REQUIRE(pastFixing != null, () => "Missing " + index.name() + " fixing for " + fixingDates[i].ToString());
 
-            compoundFactor *= (1.0 + pastFixing.GetValueOrDefault() * dt[i]);
+            compoundFactor *= (Const.ONE_DOUBLE + pastFixing.GetValueOrDefault() * dt[i]);
             ++i;
          }
 
@@ -67,7 +67,7 @@ namespace QLNet
 
                if (pastFixing != null)
                {
-                  compoundFactor *= (1.0 + pastFixing.GetValueOrDefault() * dt[i]);
+                  compoundFactor *= (Const.ONE_DOUBLE + pastFixing.GetValueOrDefault() * dt[i]);
                   ++i;
                }
                else
@@ -95,15 +95,15 @@ namespace QLNet
             compoundFactor *= startDiscount / endDiscount;
          }
 
-         double rate = (compoundFactor - 1.0) / coupon_.accrualPeriod();
+         double rate = (compoundFactor - Const.ONE_DOUBLE) / coupon_.accrualPeriod();
          return coupon_.gearing() * rate + coupon_.spread();
       }
 
-      public override double swapletPrice() { Utils.QL_FAIL("swapletPrice not available"); return 0; }
-      public override double capletPrice(double d) { Utils.QL_FAIL("capletPrice not available"); return 0; }
-      public override double capletRate(double d) { Utils.QL_FAIL("capletRate not available"); return 0; }
-      public override double floorletPrice(double d) { Utils.QL_FAIL("floorletPrice not available"); return 0; }
-      public override double floorletRate(double d) { Utils.QL_FAIL("floorletRate not available"); return 0; }
+      public override double swapletPrice() { Utils.QL_FAIL("swapletPrice not available"); return Const.ZERO_INT; }
+      public override double capletPrice(double d) { Utils.QL_FAIL("capletPrice not available"); return Const.ZERO_INT; }
+      public override double capletRate(double d) { Utils.QL_FAIL("capletRate not available"); return Const.ZERO_INT; }
+      public override double floorletPrice(double d) { Utils.QL_FAIL("floorletPrice not available"); return Const.ZERO_INT; }
+      public override double floorletRate(double d) { Utils.QL_FAIL("floorletRate not available"); return Const.ZERO_INT; }
 
    }
 
@@ -115,8 +115,8 @@ namespace QLNet
          Date startDate,
          Date endDate,
          OvernightIndex overnightIndex,
-         double gearing = 1.0,
-         double spread = 0.0,
+         double gearing = Const.ONE_DOUBLE,
+         double spread = Const.ZERO_DOUBLE,
          Date refPeriodStart = null,
          Date refPeriodEnd = null,
          DayCounter dayCounter = null)
@@ -130,33 +130,33 @@ namespace QLNet
          Schedule sch = new MakeSchedule()
          .from(startDate)
          .to(endDate)
-         .withTenor(new Period(1, TimeUnit.Days))
+         .withTenor(new Period(Const.ONE_INT, TimeUnit.Days))
          .withCalendar(overnightIndex.fixingCalendar())
          .withConvention(overnightIndex.businessDayConvention())
          .backwards()
          .value();
 
          valueDates_ = sch.dates();
-         Utils.QL_REQUIRE(valueDates_.Count >= 2, () => "degenerate schedule");
+         Utils.QL_REQUIRE(valueDates_.Count >= Const.TWO_INT, () => "degenerate schedule");
 
          // fixing dates
-         n_ = valueDates_.Count - 1;
-         if (overnightIndex.fixingDays() == 0)
+         n_ = valueDates_.Count - Const.ONE_INT;
+         if (overnightIndex.fixingDays() == Const.ZERO_INT)
          {
             fixingDates_ = new List<Date>(valueDates_);
          }
          else
          {
             fixingDates_ = new InitializedList<Date>(n_);
-            for (int i = 0; i < n_; ++i)
+            for (int i = Const.ZERO_INT; i < n_; ++i)
                fixingDates_[i] = overnightIndex.fixingDate(valueDates_[i]);
          }
 
          // accrual (compounding) periods
          dt_ = new List<double>(n_);
          DayCounter dc = overnightIndex.dayCounter();
-         for (int i = 0; i < n_; ++i)
-            dt_.Add(dc.yearFraction(valueDates_[i], valueDates_[i + 1]));
+         for (int i = Const.ZERO_INT; i < n_; ++i)
+            dt_.Add(dc.yearFraction(valueDates_[i], valueDates_[i + Const.ONE_INT]));
 
          setPricer(new OvernightIndexedCouponPricer());
 
@@ -165,7 +165,7 @@ namespace QLNet
       public List<double> indexFixings()
       {
          fixings_ = new InitializedList<double>(n_);
-         for (int i = 0; i < n_; ++i)
+         for (int i = Const.ZERO_INT; i < n_; ++i)
             fixings_[i] = index_.fixing(fixingDates_[i]);
          return fixings_;
       }

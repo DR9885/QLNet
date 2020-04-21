@@ -80,10 +80,10 @@ namespace QLNet
             double indexStart = cpiIndex().fixing(dd.Key);
             if (observationInterpolation() == InterpolationType.Linear)
             {
-               double indexEnd = cpiIndex().fixing(dd.Value + new Period(1, TimeUnit.Days));
+               double indexEnd = cpiIndex().fixing(dd.Value + new Period(Const.ONE_INT, TimeUnit.Days));
                // linear interpolation
                I1 = indexStart + (indexEnd - indexStart) * (d - dd.Key)
-                    / (double)((dd.Value + new Period(1, TimeUnit.Days)) - dd.Key); // can't get to next period's value within current period
+                    / (double)((dd.Value + new Period(Const.ONE_INT, TimeUnit.Days)) - dd.Key); // can't get to next period's value within current period
             }
             else
             {
@@ -106,7 +106,7 @@ namespace QLNet
                        InterpolationType observationInterpolation,
                        DayCounter dayCounter,
                        double fixedRate, // aka gearing
-                       double spread = 0.0,
+                       double spread = Const.ZERO_DOUBLE,
                        Date refPeriodStart = null,
                        Date refPeriodEnd = null,
                        Date exCouponDate = null)
@@ -118,7 +118,7 @@ namespace QLNet
          fixedRate_ = fixedRate;
          spread_ = spread;
          observationInterpolation_ = observationInterpolation;
-         Utils.QL_REQUIRE(Math.Abs(baseCPI_) > 1e-16, () => "|baseCPI_| < 1e-16, future divide-by-zero problem");
+         Utils.QL_REQUIRE(Math.Abs(baseCPI_) > Const.ACCURACY_SIXTEEN, () => "|baseCPI_| < 1e-16, future divide-by-zero problem");
       }
 
       // Inspectors
@@ -164,7 +164,7 @@ namespace QLNet
          interpolation_ = interpolation;
          frequency_ = frequency;
 
-         Utils.QL_REQUIRE(Math.Abs(baseFixing_) > 1e-16, () => "|baseFixing|<1e-16, future divide-by-zero error");
+         Utils.QL_REQUIRE(Math.Abs(baseFixing_) > Const.ACCURACY_SIXTEEN, () => "|baseFixing|<1e-16, future divide-by-zero error");
 
          if (interpolation_ != InterpolationType.AsIndex)
          {
@@ -206,10 +206,10 @@ namespace QLNet
             double indexStart = index().fixing(dd.Key);
             if (interpolation() == InterpolationType.Linear)
             {
-               double indexEnd = index().fixing(dd.Value + new Period(1, TimeUnit.Days));
+               double indexEnd = index().fixing(dd.Value + new Period(Const.ONE_INT, TimeUnit.Days));
                // linear interpolation
                I1 = indexStart + (indexEnd - indexStart) * (fixingDate() - dd.Key)
-                    / ((dd.Value + new Period(1, TimeUnit.Days)) - dd.Key); // can't get to next period's value within current period
+                    / ((dd.Value + new Period(Const.ONE_INT, TimeUnit.Days)) - dd.Key); // can't get to next period's value within current period
             }
             else
             {
@@ -220,7 +220,7 @@ namespace QLNet
          }
 
          if (growthOnly())
-            return notional() * (I1 / I0 - 1.0);
+            return notional() * (I1 / I0 - Const.ONE_DOUBLE);
          else
             return notional() * (I1 / I0);
       }
@@ -252,29 +252,29 @@ namespace QLNet
          paymentDayCounter_ = new Thirty360();
          paymentAdjustment_ = BusinessDayConvention.ModifiedFollowing;
          paymentCalendar_ = schedule.calendar();
-         fixingDays_ = new List<int>() { 0 };
+         fixingDays_ = new List<int>() { Const.ZERO_INT };
          observationInterpolation_ = InterpolationType.AsIndex;
          subtractInflationNominal_ = true;
-         spreads_ = new List<double>() { 0 };
+         spreads_ = new List<double>() { Const.ZERO_INT };
       }
 
       public override List<CashFlow> value()
       {
          Utils.QL_REQUIRE(!notionals_.empty(), () => "no notional given");
 
-         int n = schedule_.Count - 1;
-         List<CashFlow> leg = new List<CashFlow>(n + 1);
+         int n = schedule_.Count - Const.ONE_INT;
+         List<CashFlow> leg = new List<CashFlow>(n + Const.ONE_INT);
 
-         if (n > 0)
+         if (n > Const.ZERO_INT)
          {
             Utils.QL_REQUIRE(!fixedRates_.empty() || !spreads_.empty(), () => "no fixedRates or spreads given");
 
             Date refStart, start, refEnd, end;
 
-            for (int i = 0; i < n; ++i)
+            for (int i = Const.ZERO_INT; i < n; ++i)
             {
                refStart = start = schedule_.date(i);
-               refEnd = end = schedule_.date(i + 1);
+               refEnd = end = schedule_.date(i + Const.ONE_INT);
                Date paymentDate = paymentCalendar_.adjust(end, paymentAdjustment_);
 
                Date exCouponDate = null;
@@ -286,20 +286,20 @@ namespace QLNet
                                                            exCouponEndOfMonth_);
                }
 
-               if (i == 0 && !schedule_.isRegular(i + 1))
+               if (i == Const.ZERO_INT && !schedule_.isRegular(i + Const.ONE_INT))
                {
                   BusinessDayConvention bdc = schedule_.businessDayConvention();
                   refStart = schedule_.calendar().adjust(end - schedule_.tenor(), bdc);
                }
-               if (i == n - 1 && !schedule_.isRegular(i + 1))
+               if (i == n - Const.ONE_INT && !schedule_.isRegular(i + Const.ONE_INT))
                {
                   BusinessDayConvention bdc = schedule_.businessDayConvention();
                   refEnd = schedule_.calendar().adjust(start + schedule_.tenor(), bdc);
                }
-               if (Utils.Get(fixedRates_, i, 1.0).IsEqual(0.0))
+               if (Utils.Get(fixedRates_, i, Const.ONE_DOUBLE).IsEqual(Const.ZERO_DOUBLE))
                {
                   // fixed coupon
-                  leg.Add(new FixedRateCoupon(paymentDate, Utils.Get(notionals_, i, 0.0),
+                  leg.Add(new FixedRateCoupon(paymentDate, Utils.Get(notionals_, i, Const.ZERO_DOUBLE),
                                               Utils.effectiveFixedRate(spreads_, caps_, floors_, i),
                                               paymentDayCounter_, start, end, refStart, refEnd, exCouponDate));
                }
@@ -313,14 +313,14 @@ namespace QLNet
 
                      coup = new CPICoupon(baseCPI_,    // all have same base for ratio
                                           paymentDate,
-                                          Utils.Get(notionals_, i, 0.0),
+                                          Utils.Get(notionals_, i, Const.ZERO_DOUBLE),
                                           start, end,
-                                          Utils.Get(fixingDays_, i, 0),
+                                          Utils.Get(fixingDays_, i, Const.ZERO_INT),
                                           index_, observationLag_,
                                           observationInterpolation_,
                                           paymentDayCounter_,
-                                          Utils.Get(fixedRates_, i, 0.0),
-                                          Utils.Get(spreads_, i, 0.0),
+                                          Utils.Get(fixedRates_, i, Const.ZERO_DOUBLE),
+                                          Utils.Get(spreads_, i, Const.ZERO_DOUBLE),
                                           refStart, refEnd, exCouponDate);
 
                      // in this case you can set a pricer
@@ -343,7 +343,7 @@ namespace QLNet
          Date pDate = paymentCalendar_.adjust(schedule_.date(n), paymentAdjustment_);
          Date fixingDate = pDate - observationLag_;
          CashFlow xnl = new CPICashFlow
-         (Utils.Get(notionals_, n, 0.0), index_,
+         (Utils.Get(notionals_, n, Const.ZERO_DOUBLE), index_,
           new Date(), // is fake, i.e. you do not have one
           baseCPI_, fixingDate, pDate,
           subtractInflationNominal_, observationInterpolation_,

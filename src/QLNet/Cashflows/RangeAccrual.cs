@@ -47,8 +47,8 @@ namespace QLNet
          Utils.QL_REQUIRE(observationsSchedule_.endDate() == endDate, () => "incompatible end date");
 
          observationDates_ = new List<Date>(observationsSchedule_.dates());
-         observationDates_.RemoveAt(observationDates_.Count - 1); //remove end date
-         observationDates_.RemoveAt(0);                         //remove start date
+         observationDates_.RemoveAt(observationDates_.Count - Const.ONE_INT); //remove end date
+         observationDates_.RemoveAt(Const.ZERO_INT);                         //remove start date
          observationsNo_ = observationDates_.Count;
 
          Handle<YieldTermStructure> rateCurve = index.forwardingTermStructure();
@@ -57,7 +57,7 @@ namespace QLNet
          startTime_ = dayCounter.yearFraction(referenceDate, startDate);
          endTime_ = dayCounter.yearFraction(referenceDate, endDate);
          observationTimes_ = new List<double>();
-         for (int i = 0; i < observationsNo_; i++)
+         for (int i = Const.ZERO_INT; i < observationsNo_; i++)
          {
             observationTimes_.Add(dayCounter.yearFraction(referenceDate, observationDates_[i]));
          }
@@ -100,22 +100,22 @@ namespace QLNet
       public override double capletPrice(double effectiveCap)
       {
          Utils.QL_FAIL("RangeAccrualPricer::capletPrice not implemented");
-         return 0;
+         return Const.ZERO_INT;
       }
       public override double capletRate(double effectiveCap)
       {
          Utils.QL_FAIL("RangeAccrualPricer::capletRate not implemented");
-         return 0;
+         return Const.ZERO_INT;
       }
       public override double floorletPrice(double effectiveFloor)
       {
          Utils.QL_FAIL("RangeAccrualPricer::floorletPrice not implemented");
-         return 0;
+         return Const.ZERO_INT;
       }
       public override double floorletRate(double effectiveFloor)
       {
          Utils.QL_FAIL("RangeAccrualPricer::floorletRate not implemented");
-         return 0;
+         return Const.ZERO_INT;
       }
       public override void initialize(FloatingRateCoupon coupon)
       {
@@ -141,11 +141,11 @@ namespace QLNet
          observationsNo_ = coupon_.observationsNo();
 
          List<Date> observationDates = coupon_.observationsSchedule().dates();
-         Utils.QL_REQUIRE(observationDates.Count == observationsNo_ + 2, () => "incompatible size of initialValues vector");
-         initialValues_ = new InitializedList<double>(observationDates.Count, 0.0);
+         Utils.QL_REQUIRE(observationDates.Count == observationsNo_ + Const.TWO_INT, () => "incompatible size of initialValues vector");
+         initialValues_ = new InitializedList<double>(observationDates.Count, Const.ZERO_DOUBLE);
 
          Calendar calendar = index.fixingCalendar();
-         for (int i = 0; i < observationDates.Count; i++)
+         for (int i = Const.ZERO_INT; i < observationDates.Count; i++)
          {
             initialValues_[i] = index.fixing(
                                    calendar.advance(observationDates[i], -coupon_.fixingDays, TimeUnit.Days));
@@ -182,16 +182,16 @@ namespace QLNet
          byCallSpread_ = byCallSpread;
          smilesOnExpiry_ = smilesOnExpiry;
          smilesOnPayment_ = smilesOnPayment;
-         eps_ = 1.0e-8;
+         eps_ = Const.ACCURACY_EIGHT;
       }
       // Observer interface
       public override double swapletPrice()
       {
-         double result = 0.0;
-         double deflator = discount_ * initialValues_[0];
-         for (int i = 0; i < observationsNo_; i++)
+         double result = Const.ZERO_DOUBLE;
+         double deflator = discount_ * initialValues_[Const.ZERO_INT];
+         for (int i = Const.ZERO_INT; i < observationsNo_; i++)
          {
-            double digitalFloater = digitalRangePrice(lowerTrigger_, upperTrigger_, initialValues_[i + 1],
+            double digitalFloater = digitalRangePrice(lowerTrigger_, upperTrigger_, initialValues_[i + Const.ONE_INT],
                                                       observationTimes_[i], deflator);
             result += digitalFloater;
          }
@@ -205,12 +205,12 @@ namespace QLNet
          double L0T = initialValues_.Last();
 
          double driftBeforeFixing =
-            p * accrualFactor_ * L0T / (1.0 + L0T * accrualFactor_)
+            p * accrualFactor_ * L0T / (Const.ONE_DOUBLE + L0T * accrualFactor_)
             * (p * lambdaT * lambdaT + q * lambdaS * lambdaT * correlation) +
             q * lambdaS * lambdaS + p * lambdaS * lambdaT * correlation;
-         double driftAfterFixing = (p * accrualFactor_ * L0T / (1.0 + L0T * accrualFactor_) - 0.5) * lambdaT * lambdaT;
+         double driftAfterFixing = (p * accrualFactor_ * L0T / (Const.ONE_DOUBLE + L0T * accrualFactor_) - Const.FIFTY_PERCENT) * lambdaT * lambdaT;
 
-         return startTime_ > 0 ? driftBeforeFixing : driftAfterFixing;
+         return startTime_ > Const.ZERO_INT ? driftBeforeFixing : driftAfterFixing;
       }
       protected double derDriftDerLambdaS(double U, double lambdaS, double lambdaT, double correlation)
       {
@@ -218,11 +218,11 @@ namespace QLNet
          double q = (endTime_ - U) / accrualFactor_;
          double L0T = initialValues_.Last();
 
-         double driftBeforeFixing = p * accrualFactor_ * L0T / (1.0 + L0T * accrualFactor_)
-                                    * (q * lambdaT * correlation) + 2 * q * lambdaS + p * lambdaT * correlation;
-         double driftAfterFixing = 0.0;
+         double driftBeforeFixing = p * accrualFactor_ * L0T / (Const.ONE_DOUBLE + L0T * accrualFactor_)
+                                    * (q * lambdaT * correlation) + Const.TWO_INT * q * lambdaS + p * lambdaT * correlation;
+         double driftAfterFixing = Const.ZERO_DOUBLE;
 
-         return startTime_ > 0 ? driftBeforeFixing : driftAfterFixing;
+         return startTime_ > Const.ZERO_INT ? driftBeforeFixing : driftAfterFixing;
       }
       protected double derDriftDerLambdaT(double U, double lambdaS, double lambdaT, double correlation)
       {
@@ -230,12 +230,12 @@ namespace QLNet
          double q = (endTime_ - U) / accrualFactor_;
          double L0T = initialValues_.Last();
 
-         double driftBeforeFixing = p * accrualFactor_ * L0T / (1.0 + L0T * accrualFactor_)
-                                    * (2 * p * lambdaT + q * lambdaS * correlation) + +p * lambdaS * correlation;
-         double driftAfterFixing = (p * accrualFactor_ * L0T / (1.0 + L0T * accrualFactor_) - 0.5)
-                                   * 2 * lambdaT;
+         double driftBeforeFixing = p * accrualFactor_ * L0T / (Const.ONE_DOUBLE + L0T * accrualFactor_)
+                                    * (Const.TWO_INT * p * lambdaT + q * lambdaS * correlation) + +p * lambdaS * correlation;
+         double driftAfterFixing = (p * accrualFactor_ * L0T / (Const.ONE_DOUBLE + L0T * accrualFactor_) - Const.FIFTY_PERCENT)
+                                   * Const.TWO_INT * lambdaT;
 
-         return startTime_ > 0 ? driftBeforeFixing : driftAfterFixing;
+         return startTime_ > Const.ZERO_INT ? driftBeforeFixing : driftAfterFixing;
       }
 
       protected double lambda(double U, double lambdaS, double lambdaT)
@@ -243,16 +243,16 @@ namespace QLNet
          double p = (U - startTime_) / accrualFactor_;
          double q = (endTime_ - U) / accrualFactor_;
 
-         return startTime_ > 0 ? q * lambdaS + p * lambdaT : lambdaT;
+         return startTime_ > Const.ZERO_INT ? q * lambdaS + p * lambdaT : lambdaT;
       }
       protected double derLambdaDerLambdaS(double U)
       {
-         return startTime_ > 0 ? (endTime_ - U) / accrualFactor_ : 0.0;
+         return startTime_ > Const.ZERO_INT ? (endTime_ - U) / accrualFactor_ : Const.ZERO_DOUBLE;
       }
 
       protected double derLambdaDerLambdaT(double U)
       {
-         return startTime_ > 0 ? (U - startTime_) / accrualFactor_ : 0.0;
+         return startTime_ > Const.ZERO_INT ? (U - startTime_) / accrualFactor_ : Const.ZERO_DOUBLE;
       }
 
       protected List<double> driftsOverPeriod(double U, double lambdaS, double lambdaT, double correlation)
@@ -264,10 +264,10 @@ namespace QLNet
          double L0T = initialValues_.Last();
 
          double driftBeforeFixing =
-            p * accrualFactor_ * L0T / (1.0 + L0T * accrualFactor_) * (p * lambdaT * lambdaT + q * lambdaS * lambdaT * correlation) +
+            p * accrualFactor_ * L0T / (Const.ONE_DOUBLE + L0T * accrualFactor_) * (p * lambdaT * lambdaT + q * lambdaS * lambdaT * correlation) +
             q * lambdaS * lambdaS + p * lambdaS * lambdaT * correlation
-            - 0.5 * lambda(U, lambdaS, lambdaT) * lambda(U, lambdaS, lambdaT);
-         double driftAfterFixing = (p * accrualFactor_ * L0T / (1.0 + L0T * accrualFactor_) - 0.5) * lambdaT * lambdaT;
+            - Const.FIFTY_PERCENT * lambda(U, lambdaS, lambdaT) * lambda(U, lambdaS, lambdaT);
+         double driftAfterFixing = (p * accrualFactor_ * L0T / (Const.ONE_DOUBLE + L0T * accrualFactor_) - Const.FIFTY_PERCENT) * lambdaT * lambdaT;
 
          result.Add(driftBeforeFixing);
          result.Add(driftAfterFixing);
@@ -296,7 +296,7 @@ namespace QLNet
          double lowerPrice = digitalPrice(lowerTrigger, initialValue, expiry, deflator);
          double upperPrice = digitalPrice(upperTrigger, initialValue, expiry, deflator);
          double result = lowerPrice - upperPrice;
-         Utils.QL_REQUIRE(result > 0.0, () =>
+         Utils.QL_REQUIRE(result > Const.ZERO_DOUBLE, () =>
                           "RangeAccrualPricerByBgm::digitalRangePrice:\n digitalPrice(" + upperTrigger +
                           "): " + upperPrice + " >  digitalPrice(" + lowerTrigger + "): " + lowerPrice);
          return result;
@@ -305,7 +305,7 @@ namespace QLNet
       protected double digitalPrice(double strike, double initialValue, double expiry, double deflator)
       {
          double result = deflator;
-         if (strike > eps_ / 2)
+         if (strike > eps_ / Const.TWO_INT)
          {
             result = withSmile_
                      ? digitalPriceWithSmile(strike, initialValue, expiry, deflator)
@@ -320,23 +320,23 @@ namespace QLNet
          double lambdaT = smilesOnPayment_.volatility(strike);
 
          List<double> lambdaU = lambdasOverPeriod(expiry, lambdaS, lambdaT);
-         double variance = startTime_ * lambdaU[0] * lambdaU[0] + (expiry - startTime_) * lambdaU[1] * lambdaU[1];
+         double variance = startTime_ * lambdaU[Const.ZERO_INT] * lambdaU[Const.ZERO_INT] + (expiry - startTime_) * lambdaU[Const.ONE_INT] * lambdaU[Const.ONE_INT];
 
          double lambdaSATM = smilesOnExpiry_.volatility(initialValue);
          double lambdaTATM = smilesOnPayment_.volatility(initialValue);
          //drift of Lognormal process (of Libor) "a_U()" nel paper
          List<double> muU = driftsOverPeriod(expiry, lambdaSATM, lambdaTATM, correlation_);
-         double adjustment = (startTime_ * muU[0] + (expiry - startTime_) * muU[1]);
+         double adjustment = (startTime_ * muU[Const.ZERO_INT] + (expiry - startTime_) * muU[Const.ONE_INT]);
 
 
-         double d2 = (Math.Log(initialValue / strike) + adjustment - 0.5 * variance) / Math.Sqrt(variance);
+         double d2 = (Math.Log(initialValue / strike) + adjustment - Const.FIFTY_PERCENT * variance) / Math.Sqrt(variance);
 
          CumulativeNormalDistribution phi = new CumulativeNormalDistribution();
          double result = deflator * phi.value(d2);
 
-         Utils.QL_REQUIRE(result > 0.0, () =>
+         Utils.QL_REQUIRE(result > Const.ZERO_DOUBLE, () =>
                           "RangeAccrualPricerByBgm::digitalPriceWithoutSmile: result< 0. Result:" + result);
-         Utils.QL_REQUIRE(result / deflator <= 1.0, () =>
+         Utils.QL_REQUIRE(result / deflator <= Const.ONE_DOUBLE, () =>
                           "RangeAccrualPricerByBgm::digitalPriceWithoutSmile: result/deflator > 1. Ratio: "
                           + result / deflator + " result: " + result + " deflator: " + deflator);
 
@@ -349,33 +349,33 @@ namespace QLNet
          if (byCallSpread_)
          {
             // Previous strike
-            double previousStrike = strike - eps_ / 2;
+            double previousStrike = strike - eps_ / Const.TWO_INT;
             double lambdaS = smilesOnExpiry_.volatility(previousStrike);
             double lambdaT = smilesOnPayment_.volatility(previousStrike);
 
             //drift of Lognormal process (of Libor) "a_U()" nel paper
             List<double> lambdaU = lambdasOverPeriod(expiry, lambdaS, lambdaT);
-            double previousVariance = Math.Max(startTime_, 0.0) * lambdaU[0] * lambdaU[0] +
-                                      Math.Min(expiry - startTime_, expiry) * lambdaU[1] * lambdaU[1];
+            double previousVariance = Math.Max(startTime_, Const.ZERO_DOUBLE) * lambdaU[Const.ZERO_INT] * lambdaU[Const.ZERO_INT] +
+                                      Math.Min(expiry - startTime_, expiry) * lambdaU[Const.ONE_INT] * lambdaU[Const.ONE_INT];
 
             double lambdaSATM = smilesOnExpiry_.volatility(initialValue);
             double lambdaTATM = smilesOnPayment_.volatility(initialValue);
             List<double> muU = driftsOverPeriod(expiry, lambdaSATM, lambdaTATM, correlation_);
-            double previousAdjustment = Math.Exp(Math.Max(startTime_, 0.0) * muU[0] +
-                                                 Math.Min(expiry - startTime_, expiry) * muU[1]);
+            double previousAdjustment = Math.Exp(Math.Max(startTime_, Const.ZERO_DOUBLE) * muU[Const.ZERO_INT] +
+                                                 Math.Min(expiry - startTime_, expiry) * muU[Const.ONE_INT]);
             double previousForward = initialValue * previousAdjustment;
 
             // Next strike
-            double nextStrike = strike + eps_ / 2;
+            double nextStrike = strike + eps_ / Const.TWO_INT;
             lambdaS = smilesOnExpiry_.volatility(nextStrike);
             lambdaT = smilesOnPayment_.volatility(nextStrike);
 
             lambdaU = lambdasOverPeriod(expiry, lambdaS, lambdaT);
-            double nextVariance = Math.Max(startTime_, 0.0) * lambdaU[0] * lambdaU[0] +
-                                  Math.Min(expiry - startTime_, expiry) * lambdaU[1] * lambdaU[1];
+            double nextVariance = Math.Max(startTime_, Const.ZERO_DOUBLE) * lambdaU[Const.ZERO_INT] * lambdaU[Const.ZERO_INT] +
+                                  Math.Min(expiry - startTime_, expiry) * lambdaU[Const.ONE_INT] * lambdaU[1];
             //drift of Lognormal process (of Libor) "a_U()" nel paper
             muU = driftsOverPeriod(expiry, lambdaSATM, lambdaTATM, correlation_);
-            double nextAdjustment = Math.Exp(Math.Max(startTime_, 0.0) * muU[0] +
+            double nextAdjustment = Math.Exp(Math.Max(startTime_, Const.ZERO_DOUBLE) * muU[Const.ZERO_INT] +
                                              Math.Min(expiry - startTime_, expiry) * muU[1]);
             double nextForward = initialValue * nextAdjustment;
 
@@ -388,9 +388,9 @@ namespace QLNet
                      smileCorrection(strike, initialValue, expiry, deflator);
          }
 
-         Utils.QL_REQUIRE(result > -Math.Pow(eps_, .5), () =>
+         Utils.QL_REQUIRE(result > -Math.Pow(eps_, Const.FIFTY_PERCENT), () =>
                           "RangeAccrualPricerByBgm::digitalPriceWithSmile: result< 0 Result:" + result);
-         Utils.QL_REQUIRE(result / deflator <= 1.0 + Math.Pow(eps_, .2), () =>
+         Utils.QL_REQUIRE(result / deflator <= Const.ONE_DOUBLE + Math.Pow(eps_, Const.TWENTY_PERCENT), () =>
                           "RangeAccrualPricerByBgm::digitalPriceWithSmile: result/deflator > 1. Ratio: "
                           + result / deflator + " result: " + result + " deflator: " + deflator);
 
@@ -425,8 +425,8 @@ namespace QLNet
                                        double expiry,
                                        double deflator)
       {
-         double previousStrike = strike - eps_ / 2;
-         double nextStrike = strike + eps_ / 2;
+         double previousStrike = strike - eps_ / Const.TWO_INT;
+         double nextStrike = strike + eps_ / Const.TWO_INT;
 
          double derSmileS = (smilesOnExpiry_.volatility(nextStrike) -
                              smilesOnExpiry_.volatility(previousStrike)) / eps_;
@@ -446,17 +446,17 @@ namespace QLNet
          //drift of Lognormal process (of Libor) "a_U()" nel paper
          List<double> muU = driftsOverPeriod(expiry, lambdaSATM, lambdaTATM, correlation_);
 
-         double variance = Math.Max(startTime_, 0.0) * lambdasOverPeriodU[0] * lambdasOverPeriodU[0] +
+         double variance = Math.Max(startTime_, Const.ZERO_DOUBLE) * lambdasOverPeriodU[Const.ZERO_INT] * lambdasOverPeriodU[Const.ZERO_INT] +
                            Math.Min(expiry - startTime_, expiry) * lambdasOverPeriodU[1] * lambdasOverPeriodU[1];
 
-         double forwardAdjustment = Math.Exp(Math.Max(startTime_, 0.0) * muU[0] +
+         double forwardAdjustment = Math.Exp(Math.Max(startTime_, Const.ZERO_DOUBLE) * muU[Const.ZERO_INT] +
                                              Math.Min(expiry - startTime_, expiry) * muU[1]);
          double forwardAdjusted = forward * forwardAdjustment;
 
-         double d1 = (Math.Log(forwardAdjusted / strike) + 0.5 * variance) / Math.Sqrt(variance);
+         double d1 = (Math.Log(forwardAdjusted / strike) + Const.FIFTY_PERCENT * variance) / Math.Sqrt(variance);
 
-         double sqrtOfTimeToExpiry = (Math.Max(startTime_, 0.0) * lambdasOverPeriodU[0] +
-                                      Math.Min(expiry - startTime_, expiry) * lambdasOverPeriodU[1]) * (1.0 / Math.Sqrt(variance));
+         double sqrtOfTimeToExpiry = (Math.Max(startTime_, Const.ZERO_DOUBLE) * lambdasOverPeriodU[Const.ZERO_INT] +
+                                      Math.Min(expiry - startTime_, expiry) * lambdasOverPeriodU[1]) * (Const.ONE_DOUBLE / Math.Sqrt(variance));
 
          CumulativeNormalDistribution phi = new CumulativeNormalDistribution();
          NormalDistribution psi = new NormalDistribution();
@@ -464,7 +464,7 @@ namespace QLNet
 
          result *= deflator;
 
-         Utils.QL_REQUIRE(Math.Abs(result / deflator) <= 1.0 + Math.Pow(eps_, .2), () =>
+         Utils.QL_REQUIRE(Math.Abs(result / deflator) <= Const.ONE_DOUBLE + Math.Pow(eps_, Const.TWENTY_PERCENT), () =>
                           "RangeAccrualPricerByBgm::smileCorrection: abs(result/deflator) > 1. Ratio: "
                           + result / deflator + " result: " + result + " deflator: " + deflator);
 
@@ -599,12 +599,12 @@ namespace QLNet
          Date paymentDate;
          List<Schedule> observationsSchedules = new List<Schedule>();
 
-         for (int i = 0; i < n; ++i)
+         for (int i = Const.ZERO_INT; i < n; ++i)
          {
             refStart = start = schedule_.date(i);
             refEnd = end = schedule_.date(i + 1);
             paymentDate = calendar.adjust(end, paymentAdjustment_);
-            if (i == 0 && !schedule_.isRegular(i + 1))
+            if (i == Const.ZERO_INT && !schedule_.isRegular(i + 1))
             {
                BusinessDayConvention bdc = schedule_.businessDayConvention();
                refStart = calendar.adjust(end - schedule_.tenor(), bdc);
@@ -614,12 +614,12 @@ namespace QLNet
                BusinessDayConvention bdc = schedule_.businessDayConvention();
                refEnd = calendar.adjust(start + schedule_.tenor(), bdc);
             }
-            if (Utils.Get(gearings_, i, 1.0).IsEqual(0.0))
+            if (Utils.Get(gearings_, i, Const.ONE_DOUBLE).IsEqual(Const.ZERO_DOUBLE))
             {
                // fixed coupon
                leg.Add(new FixedRateCoupon(paymentDate,
                                            Utils.Get(notionals_, i),
-                                           Utils.Get(spreads_, i, 0.0),
+                                           Utils.Get(spreads_, i, Const.ZERO_DOUBLE),
                                            paymentDayCounter_,
                                            start, end, refStart, refEnd));
             }
@@ -636,10 +636,10 @@ namespace QLNet
                                                       Utils.Get(notionals_, i),
                                                       index_,
                                                       start, end,
-                                                      Utils.Get(fixingDays_, i, 2),
+                                                      Utils.Get(fixingDays_, i, Const.TWO_INT),
                                                       paymentDayCounter_,
-                                                      Utils.Get(gearings_, i, 1.0),
-                                                      Utils.Get(spreads_, i, 0.0),
+                                                      Utils.Get(gearings_, i, Const.ONE_DOUBLE),
+                                                      Utils.Get(spreads_, i, Const.ZERO_DOUBLE),
                                                       refStart, refEnd,
                                                       observationsSchedules.Last(),
                                                       Utils.Get(lowerTriggers_, i),

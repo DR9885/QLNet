@@ -92,8 +92,8 @@ namespace QLNet
                                              YoYInflationIndex index,
                                              Period observationLag,
                                              DayCounter dayCounter,
-                                             double gearing = 1.0,
-                                             double spread = 0.0,
+                                             double gearing = Const.ONE_DOUBLE,
+                                             double spread = Const.ZERO_DOUBLE,
                                              double? cap = null,
                                              double? floor = null,
                                              Date refPeriodStart = null,
@@ -125,7 +125,7 @@ namespace QLNet
             }
          }
 
-         double floorletRate = 0.0;
+         double floorletRate = Const.ZERO_DOUBLE;
          if (isFloored_)
          {
             floorletRate =
@@ -134,7 +134,7 @@ namespace QLNet
                pricer().floorletRate(effectiveFloor())
                ;
          }
-         double capletRate = 0.0;
+         double capletRate = Const.ZERO_DOUBLE;
          if (isCapped_)
          {
             capletRate =
@@ -150,10 +150,10 @@ namespace QLNet
       //! cap
       public double? cap()
       {
-         if ((gearing_ > 0) && isCapped_)
+         if ((gearing_ > Const.ZERO_INT) && isCapped_)
             return cap_;
 
-         if ((gearing_ < 0) && isFloored_)
+         if ((gearing_ < Const.ZERO_INT) && isFloored_)
             return floor_;
 
          return null;
@@ -161,10 +161,10 @@ namespace QLNet
       //! floor
       public double? floor()
       {
-         if ((gearing_ > 0) && isFloored_)
+         if ((gearing_ > Const.ZERO_INT) && isFloored_)
             return floor_;
 
-         if ((gearing_ < 0) && isCapped_)
+         if ((gearing_ < Const.ZERO_INT) && isCapped_)
             return cap_;
 
          return null;
@@ -196,7 +196,7 @@ namespace QLNet
          isCapped_ = false;
          isFloored_ = false;
 
-         if (gearing_ > 0)
+         if (gearing_ > Const.ZERO_INT)
          {
             if (cap != null)
             {

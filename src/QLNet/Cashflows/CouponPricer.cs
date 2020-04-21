@@ -106,7 +106,7 @@ namespace QLNet
          : base(v)
       {
          timingAdjustment_ = timingAdjustment;
-         correlation_ = correlation ?? new Handle<Quote>(new SimpleQuote(1.0));
+         correlation_ = correlation ?? new Handle<Quote>(new SimpleQuote(Const.ONE_DOUBLE));
 
          Utils.QL_REQUIRE(timingAdjustment_ == TimingAdjustment.Black76 ||
                           timingAdjustment_ == TimingAdjustment.BivariateLognormal, () =>
@@ -120,7 +120,7 @@ namespace QLNet
          gearing_ = coupon.gearing();
          spread_ = coupon.spread();
          accrualPeriod_ = coupon.accrualPeriod();
-         Utils.QL_REQUIRE(accrualPeriod_.IsNotEqual(0.0), () => "null accrual period");
+         Utils.QL_REQUIRE(accrualPeriod_.IsNotEqual(Const.ZERO_DOUBLE), () => "null accrual period");
 
          index_ = coupon.index() as IborIndex;
          if (index_ == null)
@@ -137,7 +137,7 @@ namespace QLNet
          if (paymentDate > rateCurve.link.referenceDate())
             discount_ = rateCurve.link.discount(paymentDate);
          else
-            discount_ = 1.0;
+            discount_ = Const.ONE_DOUBLE;
 
          spreadLegValue_ = spread_ * accrualPeriod_ * discount_;
 
@@ -191,7 +191,7 @@ namespace QLNet
                a = effStrike;
                b = coupon_.indexFixing();
             }
-            return Math.Max(a - b, 0.0) * accrualPeriod_ * discount_;
+            return Math.Max(a - b, Const.ZERO_DOUBLE) * accrualPeriod_ * discount_;
          }
          else
          {
@@ -203,8 +203,8 @@ namespace QLNet
             bool shiftedLn = capletVolatility().link.volatilityType() == VolatilityType.ShiftedLognormal;
             double fixing =
                shiftedLn
-               ? Utils.blackFormula(optionType, effStrike, adjustedFixing(), stdDev, 1.0, shift)
-               : Utils.bachelierBlackFormula(optionType, effStrike, adjustedFixing(), stdDev, 1.0);
+               ? Utils.blackFormula(optionType, effStrike, adjustedFixing(), stdDev, Const.ONE_DOUBLE, shift)
+               : Utils.bachelierBlackFormula(optionType, effStrike, adjustedFixing(), stdDev, Const.ONE_DOUBLE);
             return fixing * accrualPeriod_ * discount_;
          }
       }
@@ -230,8 +230,8 @@ namespace QLNet
          bool shiftedLn = capletVolatility().link.volatilityType() == VolatilityType.ShiftedLognormal;
 
          double adjustment = shiftedLn
-                             ? (fixing.Value + shift) * (fixing.Value + shift) * variance * tau / (1.0 + fixing.Value * tau)
-                             : variance * tau / (1.0 + fixing.Value * tau);
+                             ? (fixing.Value + shift) * (fixing.Value + shift) * variance * tau / (Const.ONE_DOUBLE + fixing.Value * tau)
+                             : variance * tau / (Const.ONE_DOUBLE + fixing.Value * tau);
 
          if (timingAdjustment_ == TimingAdjustment.BivariateLognormal)
          {
@@ -240,17 +240,17 @@ namespace QLNet
             Date d5 = d4 >= d3 ? d3 : d2;
             double tau2 = index_.dayCounter().yearFraction(d5, d4);
             if (d4 >= d3)
-               adjustment = 0.0;
+               adjustment = Const.ZERO_DOUBLE;
             // if d4 < d2 (payment before index start) we just apply the
             // Black76 in arrears adjustment
-            if (tau2 > 0.0)
+            if (tau2 > Const.ZERO_DOUBLE)
             {
                double fixing2 = (index_.forwardingTermStructure().link.discount(d5) /
                                  index_.forwardingTermStructure().link.discount(d4) -
-                                 1.0) / tau2;
+                                 Const.ONE_DOUBLE) / tau2;
                adjustment -= shiftedLn
-                             ? correlation_.link.value() * tau2 * variance * (fixing.Value + shift) * (fixing2 + shift) / (1.0 + fixing2 * tau2)
-                             : correlation_.link.value() * tau2 * variance / (1.0 + fixing2 * tau2);
+                             ? correlation_.link.value() * tau2 * variance * (fixing.Value + shift) * (fixing2 + shift) / (Const.ONE_DOUBLE + fixing2 * tau2)
+                             : correlation_.link.value() * tau2 * variance / (Const.ONE_DOUBLE + fixing2 * tau2);
             }
          }
          return fixing.Value + adjustment;
@@ -398,16 +398,16 @@ namespace QLNet
       public static void setCouponPricers(List<CashFlow> leg, List<FloatingRateCouponPricer> pricers)
       {
          int nCashFlows = leg.Count;
-         Utils.QL_REQUIRE(nCashFlows > 0, () => "no cashflows");
+         Utils.QL_REQUIRE(nCashFlows > Const.ZERO_INT, () => "no cashflows");
 
          int nPricers = pricers.Count;
          Utils.QL_REQUIRE(nCashFlows >= nPricers, () =>
                           "mismatch between leg size (" + nCashFlows +
                           ") and number of pricers (" + nPricers + ")");
 
-         for (int i = 0; i < nCashFlows; ++i)
+         for (int i = Const.ZERO_INT; i < nCashFlows; ++i)
          {
-            PricerSetter setter = new PricerSetter(i < nPricers ? pricers[i] : pricers[nPricers - 1]);
+            PricerSetter setter = new PricerSetter(i < nPricers ? pricers[i] : pricers[nPricers - Const.ONE_INT]);
             leg[i].accept(setter);
          }
       }

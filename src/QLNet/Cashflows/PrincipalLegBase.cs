@@ -81,29 +81,29 @@ namespace QLNet
          Calendar calendar = schedule_.calendar();
 
          // first period
-         Date start = schedule_[0], end = schedule_[schedule_.Count - 1];
+         Date start = schedule_[Const.ZERO_INT], end = schedule_[schedule_.Count - Const.ONE_INT];
          Date paymentDate = calendar.adjust(start, paymentAdjustment_);
-         double nominal = notionals_[0];
-         double quota = nominal / (schedule_.Count - 1);
+         double nominal = notionals_[Const.ZERO_INT];
+         double quota = nominal / (schedule_.Count - Const.ONE_INT);
 
          leg.Add(new Principal(nominal * sign_, nominal, paymentDate, start, end, dayCounter_,  start, end));
 
-         if (schedule_.Count == 2)
+         if (schedule_.Count == Const.TWO_INT)
          {
             paymentDate = calendar.adjust(end, paymentAdjustment_);
-            leg.Add(new Principal(nominal * sign_ * -1, 0, paymentDate, start, end, dayCounter_, start, end));
+            leg.Add(new Principal(nominal * sign_ * Const.NEGATIVE_ONE_DOUBLE, Const.ZERO_INT, paymentDate, start, end, dayCounter_, start, end));
          }
          else
          {
-            end = schedule_[0];
+            end = schedule_[Const.ZERO_INT];
             // regular periods
-            for (int i = 1; i <= schedule_.Count - 1; ++i)
+            for (int i = Const.ONE_INT; i <= schedule_.Count - Const.ONE_INT; ++i)
             {
                start = end; end = schedule_[i];
                paymentDate = calendar.adjust(start, paymentAdjustment_);
                nominal -= quota;
 
-               leg.Add(new Principal(quota * sign_ * -1, nominal, paymentDate, start, end, dayCounter_, start, end));
+               leg.Add(new Principal(quota * sign_ * Const.NEGATIVE_ONE_DOUBLE, nominal, paymentDate, start, end, dayCounter_, start, end));
             }
          }
 
@@ -130,14 +130,14 @@ namespace QLNet
          Calendar calendar = schedule_.calendar();
 
          // first period might be short or long
-         Date start = schedule_[0], end = schedule_[1];
+         Date start = schedule_[Const.ZERO_INT], end = schedule_[Const.ONE_INT];
          Date paymentDate = calendar.adjust(start, paymentAdjustment_);
-         double nominal = notionals_[0];
+         double nominal = notionals_[Const.ZERO_INT];
 
          leg.Add(new Principal(nominal, nominal, paymentDate, start, end, dayCounter_, start, end));
 
          paymentDate = calendar.adjust(end, paymentAdjustment_);
-         leg.Add(new Principal(nominal * -1, 0, paymentDate, start, end, dayCounter_, start, end));
+         leg.Add(new Principal(nominal * Const.NEGATIVE_ONE_DOUBLE, Const.ZERO_INT, paymentDate, start, end, dayCounter_, start, end));
 
          return leg;
       }

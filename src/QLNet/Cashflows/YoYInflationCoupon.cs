@@ -31,8 +31,8 @@ namespace QLNet
                                 YoYInflationIndex yoyIndex,
                                 Period observationLag,
                                 DayCounter dayCounter,
-                                double gearing = 1.0,
-                                double spread = 0.0,
+                                double gearing = Const.ONE_DOUBLE,
+                                double spread = Const.ZERO_DOUBLE,
                                 Date refPeriodStart = null,
                                 Date refPeriodEnd = null)
          : base(paymentDate, nominal, startDate, endDate,

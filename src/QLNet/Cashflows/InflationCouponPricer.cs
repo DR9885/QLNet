@@ -42,12 +42,12 @@ namespace QLNet
    public class InflationCouponPricer : IObserver, IObservable
    {
       // Interface
-      public virtual double swapletPrice() {return 0; }
-      public virtual double swapletRate() { return 0; }
-      public virtual double capletPrice(double effectiveCap) { return 0; }
-      public virtual double capletRate(double effectiveCap) { return 0; }
-      public virtual double floorletPrice(double effectiveFloor) { return 0; }
-      public virtual double floorletRate(double effectiveFloor) { return 0; }
+      public virtual double swapletPrice() {return Const.ZERO_INT; }
+      public virtual double swapletRate() { return Const.ZERO_INT; }
+      public virtual double capletPrice(double effectiveCap) { return Const.ZERO_INT; }
+      public virtual double capletRate(double effectiveCap) { return Const.ZERO_INT; }
+      public virtual double floorletPrice(double effectiveFloor) { return Const.ZERO_INT; }
+      public virtual double floorletRate(double effectiveFloor) { return Const.ZERO_INT; }
       public virtual void initialize(InflationCoupon i) {}
 
       #region Observer & observable
@@ -157,7 +157,7 @@ namespace QLNet
          // past or future fixing is managed in YoYInflationIndex::fixing()
          // use yield curve from index (which sets discount)
 
-         discount_ = 1.0;
+         discount_ = Const.ONE_DOUBLE;
          if (paymentDate_ > rateCurve_.link.referenceDate())
             discount_ = rateCurve_.link.discount(paymentDate_);
 
@@ -183,7 +183,7 @@ namespace QLNet
                a = effStrike;
                b = coupon_.indexFixing();
             }
-            return Math.Max(a - b, 0.0) * coupon_.accrualPeriod() * discount_;
+            return Math.Max(a - b, Const.ZERO_DOUBLE) * coupon_.accrualPeriod() * discount_;
 
          }
          else
@@ -208,7 +208,7 @@ namespace QLNet
                                                  double forward, double stdDev)
       {
          Utils.QL_FAIL("you must implement this to get a vol-dependent price");
-         return 0;
+         return Const.ZERO_INT;
       }
 
       protected virtual double adjustedFixing()
@@ -265,8 +265,8 @@ namespace QLNet
       {
 
          return Utils.blackFormula(optionType,
-                                   effStrike + 1.0,
-                                   forward + 1.0,
+                                   effStrike + Const.ONE_DOUBLE,
+                                   forward + Const.ONE_DOUBLE,
                                    stdDev);
       }
    }

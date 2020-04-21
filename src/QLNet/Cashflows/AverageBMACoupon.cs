@@ -43,8 +43,8 @@ namespace QLNet
                               Date startDate,
                               Date endDate,
                               BMAIndex index,
-                              double gearing = 1.0,
-                              double spread = 0.0,
+                              double gearing = Const.ONE_DOUBLE,
+                              double spread = Const.ZERO_DOUBLE,
                               Date refPeriodStart = null,
                               Date refPeriodEnd = null,
                               DayCounter dayCounter = null)
@@ -81,7 +81,7 @@ namespace QLNet
       public override double indexFixing()
       {
          Utils.QL_FAIL("no single fixing for average-BMA coupon");
-         return 0;
+         return Const.ZERO_INT;
       }
 
       /// <summary>
@@ -96,7 +96,7 @@ namespace QLNet
       public override double convexityAdjustment()
       {
          Utils.QL_FAIL("not defined for average-BMA coupon");
-         return 0;
+         return Const.ZERO_INT;
       }
 
       private Schedule fixingSchedule_;
@@ -115,25 +115,25 @@ namespace QLNet
          List<Date> fixingDates = coupon_.fixingDates();
          InterestRateIndex index = coupon_.index();
 
-         int cutoffDays = 0; // to be verified
+         int cutoffDays = Const.ZERO_INT; // to be verified
          Date startDate = coupon_.accrualStartDate() - cutoffDays,
               endDate = coupon_.accrualEndDate() - cutoffDays,
               d1 = startDate;
 
-         Utils.QL_REQUIRE(fixingDates.Count > 0, () => "fixing date list empty");
+         Utils.QL_REQUIRE(fixingDates.Count > Const.ZERO_INT, () => "fixing date list empty");
          Utils.QL_REQUIRE(index.valueDate(fixingDates.First()) <= startDate, () => "first fixing date valid after period start");
          Utils.QL_REQUIRE(index.valueDate(fixingDates.Last()) >= endDate, () => "last fixing date valid before period end");
 
-         double avgBMA = 0.0;
-         int days = 0;
-         for (int i = 0; i < fixingDates.Count - 1; ++i)
+         double avgBMA = Const.ZERO_DOUBLE;
+         int days = Const.ZERO_INT;
+         for (int i = Const.ZERO_INT; i < fixingDates.Count - Const.ONE_INT; ++i)
          {
             Date valueDate = index.valueDate(fixingDates[i]);
-            Date nextValueDate = index.valueDate(fixingDates[i + 1]);
+            Date nextValueDate = index.valueDate(fixingDates[i + Const.ONE_INT]);
 
             if (fixingDates[i] >= endDate || valueDate >= endDate)
                break;
-            if (fixingDates[i + 1] < startDate || nextValueDate <= startDate)
+            if (fixingDates[i + Const.ONE_INT] < startDate || nextValueDate <= startDate)
                continue;
 
             Date d2 = Date.Min(nextValueDate, endDate);
@@ -157,7 +157,7 @@ namespace QLNet
       public override double swapletPrice()
       {
          Utils.QL_FAIL("not available");
-         return 0;
+         return Const.ZERO_INT;
       }
 
       /// <summary>
@@ -166,7 +166,7 @@ namespace QLNet
       public override double capletPrice(double d)
       {
          Utils.QL_FAIL("not available");
-         return 0;
+         return Const.ZERO_INT;
       }
 
       /// <summary>
@@ -175,7 +175,7 @@ namespace QLNet
       public override double capletRate(double d)
       {
          Utils.QL_FAIL("not available");
-         return 0;
+         return Const.ZERO_INT;
       }
 
       /// <summary>
@@ -184,7 +184,7 @@ namespace QLNet
       public override double floorletPrice(double d)
       {
          Utils.QL_FAIL("not available");
-         return 0;
+         return Const.ZERO_INT;
       }
 
       /// <summary>
@@ -193,7 +193,7 @@ namespace QLNet
       public override double floorletRate(double d)
       {
          Utils.QL_FAIL("not available");
-         return 0;
+         return Const.ZERO_INT;
       }
 
       // recheck
@@ -259,23 +259,23 @@ namespace QLNet
          Date refStart, start, refEnd, end;
          Date paymentDate;
 
-         int n = schedule_.Count - 1;
-         for (int i = 0; i < n; ++i)
+         int n = schedule_.Count - Const.ONE_INT;
+         for (int i = Const.ZERO_INT; i < n; ++i)
          {
             refStart = start = schedule_.date(i);
-            refEnd = end = schedule_.date(i + 1);
+            refEnd = end = schedule_.date(i + Const.ONE_INT);
             paymentDate = calendar.adjust(end, paymentAdjustment_);
-            if (i == 0 && !schedule_.isRegular(i + 1))
+            if (i == Const.ZERO_INT && !schedule_.isRegular(i + Const.ONE_INT))
                refStart = calendar.adjust(end - schedule_.tenor(), paymentAdjustment_);
-            if (i == n - 1 && !schedule_.isRegular(i + 1))
+            if (i == n - Const.ONE_INT && !schedule_.isRegular(i + Const.ONE_INT))
                refEnd = calendar.adjust(start + schedule_.tenor(), paymentAdjustment_);
 
             cashflows.Add(new AverageBMACoupon(paymentDate,
                                                Utils.Get(notionals_, i, notionals_.Last()),
                                                start, end,
                                                index_,
-                                               Utils.Get(gearings_, i, 1.0),
-                                               Utils.Get(spreads_, i, 0.0),
+                                               Utils.Get(gearings_, i, Const.ONE_DOUBLE),
+                                               Utils.Get(spreads_, i, Const.ZERO_DOUBLE),
                                                refStart, refEnd,
                                                paymentDayCounter_));
          }

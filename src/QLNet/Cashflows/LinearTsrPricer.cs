@@ -49,14 +49,14 @@ namespace QLNet
          public Settings()
          {
             strategy_ = Strategy.RateBound;
-            vegaRatio_ = 0.01;
-            priceThreshold_ = 1.0E-8;
-            stdDevs_ = 3.0;
-            lowerRateBound_ = 0.0001;
-            upperRateBound_ = 2.0000;
+            vegaRatio_ = Const.ONE_PERCENT;
+            priceThreshold_ = Const.ACCURACY_EIGHT;
+            stdDevs_ = Const.THREE_DOUBLE;
+            lowerRateBound_ = Const.ONE_TEN_THOUSANDTH;
+            upperRateBound_ = Const.TWO_DOUBLE;
          }
 
-         public Settings withRateBound(double lowerRateBound = 0.0001, double upperRateBound = 2.0000)
+         public Settings withRateBound(double lowerRateBound = Const.ONE_TEN_THOUSANDTH, double upperRateBound = Const.TWO_DOUBLE)
          {
             strategy_ = Strategy.RateBound;
             lowerRateBound_ = lowerRateBound;
@@ -64,7 +64,7 @@ namespace QLNet
             return this;
          }
 
-         public Settings withVegaRatio(double vegaRatio = 0.01, double lowerRateBound = 0.0001, double upperRateBound = 2.0000)
+         public Settings withVegaRatio(double vegaRatio = Const.ONE_PERCENT, double lowerRateBound = Const.ONE_TEN_THOUSANDTH, double upperRateBound = Const.TWO_DOUBLE)
          {
             strategy_ = Strategy.VegaRatio;
             vegaRatio_ = vegaRatio;
@@ -73,8 +73,8 @@ namespace QLNet
             return this;
          }
 
-         public Settings withPriceThreshold(double priceThreshold = 1.0E-8, double lowerRateBound = 0.0001,
-                                            double upperRateBound = 2.0000)
+         public Settings withPriceThreshold(double priceThreshold = Const.ACCURACY_EIGHT, double lowerRateBound = Const.ONE_TEN_THOUSANDTH,
+                                            double upperRateBound = Const.TWO_DOUBLE)
          {
             strategy_ = Strategy.PriceThreshold;
             priceThreshold_ = priceThreshold;
@@ -83,9 +83,9 @@ namespace QLNet
             return this;
          }
 
-         public Settings withBSStdDevs(double stdDevs = 3.0,
-                                       double lowerRateBound = 0.0001,
-                                       double upperRateBound = 2.0000)
+         public Settings withBSStdDevs(double stdDevs = Const.THREE_DOUBLE,
+                                       double lowerRateBound = Const.ONE_TEN_THOUSANDTH,
+                                       double upperRateBound = Const.TWO_DOUBLE)
          {
             strategy_ = Strategy.BSStdDevs;
             stdDevs_ = stdDevs;
@@ -128,7 +128,7 @@ namespace QLNet
             couponDiscountCurve_.registerWith(update);
 
          if (integrator_ == null)
-            integrator_ = new  GaussKronrodNonAdaptive(1E-10, 5000, 1E-10);
+            integrator_ = new  GaussKronrodNonAdaptive(Const.ACCURACY_TEN, Const.FIVE_THOUSAND_INT, Const.ACCURACY_TEN);
       }
 
       /* */
@@ -166,7 +166,7 @@ namespace QLNet
          if (fixingDate_ <= today_)
          {
             // the fixing is determined
-            double Rs = Math.Max(coupon_.swapIndex().fixing(fixingDate_) - effectiveCap, 0.0);
+            double Rs = Math.Max(coupon_.swapIndex().fixing(fixingDate_) - effectiveCap, Const.ZERO_DOUBLE);
             double price =
                (gearing_ * Rs) *
                (coupon_.accrualPeriod() *
@@ -191,7 +191,7 @@ namespace QLNet
          if (fixingDate_ <= today_)
          {
             // the fixing is determined
-            double Rs = Math.Max(effectiveFloor - coupon_.swapIndex().fixing(fixingDate_), 0.0);
+            double Rs = Math.Max(effectiveFloor - coupon_.swapIndex().fixing(fixingDate_), Const.ZERO_DOUBLE);
             double price =
                (gearing_ * Rs) *
                (coupon_.accrualPeriod() *
@@ -224,16 +224,16 @@ namespace QLNet
       private double GsrG(Date d)
       {
          double yf = volDayCounter_.yearFraction(fixingDate_, d);
-         if (Math.Abs(meanReversion_.link.value()) < 1.0E-4)
+         if (Math.Abs(meanReversion_.link.value()) < Const.ACCURACY_FOUR)
             return yf;
          else
-            return (1.0 - Math.Exp(-meanReversion_.link.value() * yf)) /
+            return (Const.ONE_DOUBLE - Math.Exp(-meanReversion_.link.value() * yf)) /
                    meanReversion_.link.value();
       }
       private double singularTerms(Option.Type type, double strike)
       {
-         double omega = (type == Option.Type.Call ? 1.0 : -1.0);
-         double s1 = Math.Max(omega * (swapRateValue_ - strike), 0.0) *
+         double omega = (type == Option.Type.Call ? Const.ONE_DOUBLE : Const.NEGATIVE_ONE_DOUBLE);
+         double s1 = Math.Max(omega * (swapRateValue_ - strike), Const.ZERO_DOUBLE) *
                      (a_ * swapRateValue_ + b_);
          double s2 = (a_ * strike + b_) *
                      smileSection_.optionPrice(strike, strike < swapRateValue_ ? Option.Type.Put : Option.Type.Call);
@@ -241,7 +241,7 @@ namespace QLNet
       }
       private double integrand(double strike)
       {
-         return 2.0 * a_ * smileSection_.optionPrice(strike, strike < swapRateValue_ ? Option.Type.Put : Option.Type.Call);
+         return Const.TWO_DOUBLE * a_ * smileSection_.optionPrice(strike, strike < swapRateValue_ ? Option.Type.Put : Option.Type.Call);
       }
       private double a_, b_;
 
@@ -311,7 +311,7 @@ namespace QLNet
             couponDiscountRatio_ = couponDiscountCurve_.link.discount(paymentDate_) /
                                    discountCurve_.link.discount(paymentDate_);
          else
-            couponDiscountRatio_ = 1.0;
+            couponDiscountRatio_ = Const.ONE_DOUBLE;
 
          spreadLegValue_ = spread_ * coupon_.accrualPeriod() *
                            discountCurve_.link.discount(paymentDate_) *
@@ -341,8 +341,8 @@ namespace QLNet
 
             // compute linear model's parameters
 
-            double gx = 0.0, gy = 0.0;
-            for (int i = 0; i < swap_.fixedLeg().Count; i++)
+            double gx = Const.ZERO_DOUBLE, gy = Const.ZERO_DOUBLE;
+            for (int i = Const.ZERO_INT; i < swap_.fixedLeg().Count; i++)
             {
                Coupon c = swap_.fixedLeg()[i] as Coupon;
                double yf = c.accrualPeriod();
@@ -369,9 +369,9 @@ namespace QLNet
       private double optionletPrice(Option.Type optionType, double strike)
       {
          if (optionType == Option.Type.Call && strike >= shiftedUpperBound_)
-            return 0.0;
+            return Const.ZERO_DOUBLE;
          if (optionType == Option.Type.Put && strike <= shiftedLowerBound_)
-            return 0.0;
+            return Const.ZERO_DOUBLE;
 
          // determine lower or upper integration bound (depending on option type)
 
@@ -423,11 +423,11 @@ namespace QLNet
                {
                   upperTmp = (atm.GetValueOrDefault() + shift) *
                              Math.Exp(settings_.stdDevs_ * atmVol -
-                                      0.5 * atmVol * atmVol *
+                                      Const.FIFTY_PERCENT * atmVol * atmVol *
                                       smileSection_.exerciseTime()) - shift;
                   lowerTmp = (atm.GetValueOrDefault() + shift) *
                              Math.Exp(-settings_.stdDevs_ * atmVol -
-                                      0.5 * atmVol * atmVol *
+                                      Const.FIFTY_PERCENT * atmVol * atmVol *
                                       smileSection_.exerciseTime()) - shift;
                }
                else
@@ -448,7 +448,7 @@ namespace QLNet
 
          // compute the relevant integral
 
-         double result = 0.0;
+         double result = Const.ZERO_DOUBLE;
          double tmpBound;
          if (upper > lower)
          {
@@ -462,7 +462,7 @@ namespace QLNet
             {
                result += integrator_.value(integrand, tmpBound, upper);
             }
-            result *= (optionType == Option.Type.Call ? 1.0 : -1.0);
+            result *= (optionType == Option.Type.Call ? Const.ONE_DOUBLE : Const.NEGATIVE_ONE_DOUBLE);
          }
 
          result += singularTerms(optionType, strike);
@@ -491,7 +491,7 @@ namespace QLNet
 
          try
          {
-            k = solver.solve(h, 1.0E-5, (a + b) / 2.0, a, b);
+            k = solver.solve(h, Const.ACCURACY_FIVE, (a + b) / Const.TWO_DOUBLE, a, b);
          }
          catch (Exception)
          {
@@ -522,7 +522,7 @@ namespace QLNet
 
          try
          {
-            k = solver.solve(h, 1.0E-5, swapRateValue_, a, b);
+            k = solver.solve(h, Const.ACCURACY_FIVE, swapRateValue_, a, b);
          }
          catch (Exception)
          {
