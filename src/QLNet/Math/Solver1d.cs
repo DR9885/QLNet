@@ -75,9 +75,9 @@ namespace QLNet
          fxMax_ = f.value(root_);
 
          // monotonically crescent bias, as in optionValue(volatility)
-         if (Utils.close(fxMax_, 0.0))
+         if (Utils.close(fxMax_, Const.ZERO_DOUBLE))
             return root_;
-         else if (fxMax_ > 0.0)
+         else if (fxMax_ > Const.ZERO_DOUBLE)
          {
             xMin_ = enforceBounds_(root_ - step);
             fxMin_ = f.value(xMin_);

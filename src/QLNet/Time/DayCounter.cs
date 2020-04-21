@@ -78,7 +78,7 @@ namespace QLNet
       }
 
       public override bool Equals(object o) { return this == (DayCounter)o; }
-      public override int GetHashCode() { return 0; }
+      public override int GetHashCode() { return Const.ZERO_INT; }
       public override string ToString() { return this.name(); }
    }
 }
