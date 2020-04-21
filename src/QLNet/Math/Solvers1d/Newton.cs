@@ -46,7 +46,7 @@ namespace QLNet
             dx = froot / dfroot;
             root_ -= dx;
             // jumped out of brackets, switch to NewtonSafe
-            if ((xMin_ - root_) * (root_ - xMax_) < 0.0)
+            if ((xMin_ - root_) * (root_ - xMax_) < Const.ZERO_DOUBLE)
             {
                NewtonSafe s = new NewtonSafe();
                s.setMaxEvaluations(maxEvaluations_ - evaluationNumber_);
@@ -61,7 +61,7 @@ namespace QLNet
 
          Utils.QL_FAIL("maximum number of function evaluations (" + maxEvaluations_ + ") exceeded",
                        QLNetExceptionEnum.MaxNumberFuncEvalExceeded);
-         return 0;
+         return Const.ZERO_INT;
       }
    }
 }

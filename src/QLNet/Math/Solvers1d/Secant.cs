@@ -58,13 +58,13 @@ namespace QLNet
             root_ += dx;
             froot = f.value(root_);
             ++evaluationNumber_;
-            if (Math.Abs(dx) < xAccuracy || Utils.close(froot, 0.0))
+            if (Math.Abs(dx) < xAccuracy || Utils.close(froot, Const.ZERO_DOUBLE))
                return root_;
          }
 
          Utils.QL_FAIL("maximum number of function evaluations (" + maxEvaluations_ + ") exceeded",
                        QLNetExceptionEnum.MaxNumberFuncEvalExceeded);
-         return 0;
+         return Const.ZERO_INT;
       }
    }
 }

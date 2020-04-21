@@ -34,7 +34,7 @@ namespace QLNet
          double fl, fh, xl, xh, dx, del, froot;
 
          // Identify the limits so that xl corresponds to the low side
-         if (fxMin_ < 0.0)
+         if (fxMin_ < Const.ZERO_DOUBLE)
          {
             xl = xMin_;
             fl = fxMin_;
@@ -56,7 +56,7 @@ namespace QLNet
             root_ = xl + dx * fl / (fl - fh);
             froot = f.value(root_);
             evaluationNumber_++;
-            if (froot < 0.0)         // Replace appropriate limit
+            if (froot < Const.ZERO_DOUBLE)         // Replace appropriate limit
             {
                del = xl - root_;
                xl = root_;
@@ -70,14 +70,14 @@ namespace QLNet
             }
             dx = xh - xl;
             // Convergence criterion
-            if (Math.Abs(del) < xAccuracy || Utils.close(froot, 0.0))
+            if (Math.Abs(del) < xAccuracy || Utils.close(froot, Const.ZERO_DOUBLE))
             {
                return root_;
             }
          }
          Utils.QL_FAIL("maximum number of function evaluations (" + maxEvaluations_ + ") exceeded",
                        QLNetExceptionEnum.MaxNumberFuncEvalExceeded);
-         return 0;
+         return Const.ZERO_INT;
       }
    }
 }

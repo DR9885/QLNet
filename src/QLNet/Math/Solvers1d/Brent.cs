@@ -32,14 +32,14 @@ namespace QLNet
          double min1, min2;
          double froot, p, q, r, s, xAcc1, xMid;
          // dummy assignements to avoid compiler warning
-         double d = 0.0, e = 0.0;
+         double d = Const.ZERO_DOUBLE, e = Const.ZERO_DOUBLE;
 
          root_ = xMax_;
          froot = fxMax_;
          while (evaluationNumber_ <= maxEvaluations_)
          {
-            if ((froot > 0.0 && fxMax_ > 0.0) ||
-                (froot < 0.0 && fxMax_ < 0.0))
+            if ((froot > Const.ZERO_DOUBLE && fxMax_ > Const.ZERO_DOUBLE) ||
+                (froot < Const.ZERO_DOUBLE && fxMax_ < Const.ZERO_DOUBLE))
             {
 
                // Rename xMin_, root_, xMax_ and adjust bounds
@@ -57,9 +57,9 @@ namespace QLNet
                fxMax_ = fxMin_;
             }
             // Convergence check
-            xAcc1 = 2.0 * Const.QL_EPSILON * Math.Abs(root_) + 0.5 * xAccuracy;
-            xMid = (xMax_ - root_) / 2.0;
-            if (Math.Abs(xMid) <= xAcc1 || Utils.close(froot, 0.0))
+            xAcc1 = Const.TWO_DOUBLE * Const.QL_EPSILON * Math.Abs(root_) + Const.FIFTY_PERCENT * xAccuracy;
+            xMid = (xMax_ - root_) / Const.TWO_DOUBLE;
+            if (Math.Abs(xMid) <= xAcc1 || Utils.close(froot, Const.ZERO_DOUBLE))
                return root_;
             if (Math.Abs(e) >= xAcc1 &&
                 Math.Abs(fxMin_) > Math.Abs(froot))
@@ -69,22 +69,22 @@ namespace QLNet
                s = froot / fxMin_;
                if (Utils.close(xMin_, xMax_))
                {
-                  p = 2.0 * xMid * s;
-                  q = 1.0 - s;
+                  p = Const.TWO_DOUBLE * xMid * s;
+                  q = Const.ONE_DOUBLE - s;
                }
                else
                {
                   q = fxMin_ / fxMax_;
                   r = froot / fxMax_;
-                  p = s * (2.0 * xMid * q * (q - r) - (root_ - xMin_) * (r - 1.0));
-                  q = (q - 1.0) * (r - 1.0) * (s - 1.0);
+                  p = s * (Const.TWO_DOUBLE * xMid * q * (q - r) - (root_ - xMin_) * (r - Const.ONE_DOUBLE));
+                  q = (q - Const.ONE_DOUBLE) * (r - Const.ONE_DOUBLE) * (s - Const.ONE_DOUBLE);
                }
-               if (p > 0.0)
+               if (p > Const.ZERO_DOUBLE)
                   q = -q;  // Check whether in bounds
                p = Math.Abs(p);
-               min1 = 3.0 * xMid * q - Math.Abs(xAcc1 * q);
+               min1 = Const.THREE_DOUBLE * xMid * q - Math.Abs(xAcc1 * q);
                min2 = Math.Abs(e * q);
-               if (2.0 * p < (min1 < min2 ? min1 : min2))
+               if (Const.TWO_DOUBLE * p < (min1 < min2 ? min1 : min2))
                {
                   e = d;                // Accept interpolation
                   d = p / q;
@@ -112,7 +112,7 @@ namespace QLNet
          }
          Utils.QL_FAIL("maximum number of function evaluations (" + maxEvaluations_ + ") exceeded",
                        QLNetExceptionEnum.MaxNumberFuncEvalExceeded);
-         return 0;
+         return Const.ZERO_INT;
       }
    }
 }

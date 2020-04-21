@@ -36,7 +36,7 @@ namespace QLNet
          double xh, xl;
 
          // Orient the search so that f(xl) < 0
-         if (fxMin_ < 0.0)
+         if (fxMin_ < Const.ZERO_DOUBLE)
          {
             xl = xMin_;
             xh = xMax_;
@@ -65,12 +65,12 @@ namespace QLNet
          {
             // Bisect if (out of range || not decreasing fast enough)
             if ((((root_ - xh)*dfroot - froot)*
-                 ((root_ - xl)*dfroot - froot) > 0.0)
-                || (Math.Abs(2.0 * froot) > Math.Abs(dxold * dfroot)))
+                 ((root_ - xl)*dfroot - froot) > Const.ZERO_DOUBLE)
+                || (Math.Abs(Const.TWO_DOUBLE * froot) > Math.Abs(dxold * dfroot)))
             {
 
                dxold = dx;
-               dx = (xh - xl) / 2.0;
+               dx = (xh - xl) / Const.TWO_DOUBLE;
                root_ = xl + dx;
             }
             else
@@ -85,7 +85,7 @@ namespace QLNet
             froot = f.value(root_);
             dfroot = f.derivative(root_);
             evaluationNumber_++;
-            if (froot < 0.0)
+            if (froot < Const.ZERO_DOUBLE)
                xl = root_;
             else
                xh = root_;
@@ -93,7 +93,7 @@ namespace QLNet
 
          Utils.QL_FAIL("maximum number of function evaluations (" + maxEvaluations_ + ") exceeded",
                        QLNetExceptionEnum.MaxNumberFuncEvalExceeded);
-         return 0;
+         return Const.ZERO_INT;
       }
    }
 }

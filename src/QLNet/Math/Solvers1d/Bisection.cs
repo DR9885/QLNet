@@ -35,7 +35,7 @@ namespace QLNet
          double dx, xMid, fMid;
 
          // Orient the search so that f>0 lies at root_+dx
-         if (fxMin_ < 0.0)
+         if (fxMin_ < Const.ZERO_DOUBLE)
          {
             dx = xMax_ - xMin_;
             root_ = xMin_;
@@ -48,20 +48,20 @@ namespace QLNet
 
          while (evaluationNumber_ <= maxEvaluations_)
          {
-            dx /= 2.0;
+            dx /= Const.TWO_DOUBLE;
             xMid = root_ + dx;
             fMid = f.value(xMid);
             evaluationNumber_++;
-            if (fMid <= 0.0)
+            if (fMid <= Const.ZERO_DOUBLE)
                root_ = xMid;
-            if (Math.Abs(dx) < xAccuracy || Utils.close(fMid, 0.0))
+            if (Math.Abs(dx) < xAccuracy || Utils.close(fMid, Const.ZERO_DOUBLE))
             {
                return root_;
             }
          }
          Utils.QL_FAIL("maximum number of function evaluations (" + maxEvaluations_ + ") exceeded",
                        QLNetExceptionEnum.MaxNumberFuncEvalExceeded);
-         return 0;
+         return Const.ZERO_INT;
       }
    }
 }

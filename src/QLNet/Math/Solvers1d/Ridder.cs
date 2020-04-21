@@ -37,23 +37,23 @@ namespace QLNet
          // test on Black-Scholes implied volatility show that
          // Ridder solver algorithm actually provides an
          // accuracy 100 times below promised
-         double xAccuracy = xAcc / 100.0;
+         double xAccuracy = xAcc / Const.ONE_HUNDRED_DOUBLE;
 
          // Any highly unlikely value, to simplify logic below
          root_ = double.MinValue;
 
          while (evaluationNumber_ <= maxEvaluations_)
          {
-            xMid = 0.5 * (xMin_ + xMax_);
+            xMid = Const.FIFTY_PERCENT * (xMin_ + xMax_);
             // First of two function evaluations per iteraton
             fxMid = f.value(xMid);
             ++evaluationNumber_;
             s = Math.Sqrt(fxMid * fxMid - fxMin_ * fxMax_);
-            if (Utils.close(s, 0.0))
+            if (Utils.close(s, Const.ZERO_DOUBLE))
                return root_;
             // Updating formula
             nextRoot = xMid + (xMid - xMin_) *
-                       ((fxMin_  >= fxMax_ ? 1.0 : -1.0) * fxMid / s);
+                       ((fxMin_  >= fxMax_ ? Const.ONE_DOUBLE : -Const.ONE_DOUBLE) * fxMid / s);
             if (Math.Abs(nextRoot - root_) <= xAccuracy)
                return root_;
 
@@ -61,7 +61,7 @@ namespace QLNet
             // Second of two function evaluations per iteration
             froot = f.value(root_);
             ++evaluationNumber_;
-            if (Utils.close(froot, 0.0))
+            if (Utils.close(froot, Const.ZERO_DOUBLE))
                return root_;
 
             // Bookkeeping to keep the root bracketed on next iteration
@@ -93,11 +93,11 @@ namespace QLNet
 
          Utils.QL_FAIL("maximum number of function evaluations (" + maxEvaluations_ + ") exceeded",
                        QLNetExceptionEnum.MaxNumberFuncEvalExceeded);
-         return 0;
+         return Const.ZERO_INT;
       }
       private double sign(double a, double b)
       {
-         return b >= 0.0 ? Math.Abs(a) : -Math.Abs(a);
+         return b >= Const.ZERO_DOUBLE ? Math.Abs(a) : -Math.Abs(a);
       }
 
    }
