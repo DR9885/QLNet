@@ -35,7 +35,7 @@ namespace QLNet
       //! simple annual compounding coupon rates
       public FixedRateBond(int settlementDays, double faceAmount, Schedule schedule, List<double> coupons,
                            DayCounter accrualDayCounter, BusinessDayConvention paymentConvention = BusinessDayConvention.Following,
-                           double redemption = 100, Date issueDate = null, Calendar paymentCalendar = null,
+                           double redemption = Const.ONE_HUNDRED_INT, Date issueDate = null, Calendar paymentCalendar = null,
                            Period exCouponPeriod = null,
                            Calendar exCouponCalendar = null,
                            BusinessDayConvention exCouponConvention = BusinessDayConvention.Unadjusted,
@@ -59,8 +59,8 @@ namespace QLNet
 
          addRedemptionsToCashflows(new List<double>() { redemption });
 
-         Utils.QL_REQUIRE(cashflows().Count != 0, () => "bond with no cashflows!");
-         Utils.QL_REQUIRE(redemptions_.Count == 1, () => "multiple redemptions created");
+         Utils.QL_REQUIRE(cashflows().Count != Const.ZERO_INT, () => "bond with no cashflows!");
+         Utils.QL_REQUIRE(redemptions_.Count == Const.ONE_INT, () => "multiple redemptions created");
       }
 
       /*! simple annual compounding coupon rates
@@ -75,7 +75,7 @@ namespace QLNet
                            DayCounter accrualDayCounter,
                            BusinessDayConvention accrualConvention = BusinessDayConvention.Following,
                            BusinessDayConvention paymentConvention = BusinessDayConvention.Following,
-                           double redemption = 100,
+                           double redemption = Const.ONE_HUNDRED_INT,
                            Date issueDate = null,
                            Date stubDate = null,
                            DateGeneration.Rule rule = DateGeneration.Rule.Backward,
@@ -140,8 +140,8 @@ namespace QLNet
          addRedemptionsToCashflows(new List<double>() { redemption });
 
 
-         Utils.QL_REQUIRE(cashflows().Count != 0, () => "bond with no cashflows!");
-         Utils.QL_REQUIRE(redemptions_.Count == 1, () => "multiple redemptions created");
+         Utils.QL_REQUIRE(cashflows().Count != Const.ZERO_INT, () => "bond with no cashflows!");
+         Utils.QL_REQUIRE(redemptions_.Count == Const.ONE_INT, () => "multiple redemptions created");
       }
 
       public FixedRateBond(int settlementDays,
@@ -149,7 +149,7 @@ namespace QLNet
                            Schedule schedule,
                            List<InterestRate> coupons,
                            BusinessDayConvention paymentConvention = BusinessDayConvention.Following,
-                           double redemption = 100,
+                           double redemption = Const.ONE_HUNDRED_INT,
                            Date issueDate = null,
                            Calendar paymentCalendar = null,
                            Period exCouponPeriod = null,
@@ -162,7 +162,7 @@ namespace QLNet
       {
 
          frequency_ = schedule.tenor().frequency();
-         dayCounter_ = coupons[0].dayCounter();
+         dayCounter_ = coupons[Const.ZERO_INT].dayCounter();
          maturityDate_ = schedule.endDate();
 
          cashflows_ = new FixedRateLeg(schedule)
@@ -178,8 +178,8 @@ namespace QLNet
          addRedemptionsToCashflows(new List<double>() { redemption });
 
 
-         Utils.QL_REQUIRE(cashflows().Count != 0, () => "bond with no cashflows!");
-         Utils.QL_REQUIRE(redemptions_.Count == 1, () => "multiple redemptions created");
+         Utils.QL_REQUIRE(cashflows().Count != Const.ZERO_INT, () => "bond with no cashflows!");
+         Utils.QL_REQUIRE(redemptions_.Count == Const.ONE_INT, () => "multiple redemptions created");
       }
 
       public Frequency frequency() { return frequency_; }

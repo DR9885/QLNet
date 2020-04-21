@@ -74,11 +74,11 @@ namespace QLNet
                base.validate();
 
                Utils.QL_REQUIRE(conversionRatio != null, () => "null conversion ratio");
-               Utils.QL_REQUIRE(conversionRatio > 0.0,
+               Utils.QL_REQUIRE(conversionRatio > Const.ZERO_DOUBLE,
                                 () => "positive conversion ratio required: " + conversionRatio + " not allowed");
 
                Utils.QL_REQUIRE(redemption != null, () => "null redemption");
-               Utils.QL_REQUIRE(redemption >= 0.0, () => "positive redemption required: " + redemption + " not allowed");
+               Utils.QL_REQUIRE(redemption >= Const.ZERO_DOUBLE, () => "positive redemption required: " + redemption + " not allowed");
 
                Utils.QL_REQUIRE(settlementDate != null, () => "null settlement date");
 
@@ -110,7 +110,7 @@ namespace QLNet
                        Date issueDate,
                        int settlementDays,
                        double redemption)
-            : base(new PlainVanillaPayoff(Option.Type.Call, (bond.notionals()[0]) / 100.0 * redemption / conversionRatio),
+            : base(new PlainVanillaPayoff(Option.Type.Call, (bond.notionals()[Const.ZERO_INT]) / Const.ONE_HUNDRED_DOUBLE * redemption / conversionRatio),
                    exercise)
          {
             bond_ = bond;
@@ -158,7 +158,7 @@ namespace QLNet
             else
                moreArgs.callabilityTriggers.Clear();
 
-            for (int i = 0; i < n; i++)
+            for (int i = Const.ZERO_INT; i < n; i++)
             {
                if (!callability_[i].hasOccurred(settlement, false))
                {
@@ -191,7 +191,7 @@ namespace QLNet
             else
                moreArgs.couponAmounts.Clear();
 
-            for (int i = 0; i < cashflows.Count - 1; i++)
+            for (int i = Const.ZERO_INT; i < cashflows.Count - Const.ONE_INT; i++)
             {
                if (!cashflows[i].hasOccurred(settlement, false))
                {
@@ -210,7 +210,7 @@ namespace QLNet
             else
                moreArgs.dividendDates.Clear();
 
-            for (int i = 0; i < dividends_.Count; i++)
+            for (int i = Const.ZERO_INT; i < dividends_.Count; i++)
             {
                if (!dividends_[i].hasOccurred(settlement, false))
                {
@@ -321,7 +321,7 @@ namespace QLNet
                                        int settlementDays,
                                        DayCounter dayCounter,
                                        Schedule schedule,
-                                       double redemption = 100)
+                                       double redemption = Const.ONE_HUNDRED_INT)
          : base(
               exercise, conversionRatio, dividends, callability, creditSpread, issueDate, settlementDays, schedule,
               redemption)
@@ -329,7 +329,7 @@ namespace QLNet
          cashflows_ = new List<CashFlow>();
 
          // !!! notional forcibly set to 100
-         setSingleRedemption(100.0, redemption, maturityDate_);
+         setSingleRedemption(Const.ONE_HUNDRED_DOUBLE, redemption, maturityDate_);
 
          option_ = new option(this, exercise, conversionRatio, dividends, callability, creditSpread, cashflows_,
                               dayCounter, schedule,
@@ -356,7 +356,7 @@ namespace QLNet
                                         List<double> coupons,
                                         DayCounter dayCounter,
                                         Schedule schedule,
-                                        double redemption = 100)
+                                        double redemption = Const.ONE_HUNDRED_INT)
          : base(
               exercise, conversionRatio, dividends, callability, creditSpread, issueDate, settlementDays, schedule,
               redemption)
@@ -364,12 +364,12 @@ namespace QLNet
          // !!! notional forcibly set to 100
          cashflows_ = new FixedRateLeg(schedule)
          .withCouponRates(coupons, dayCounter)
-         .withNotionals(100.0)
+         .withNotionals(Const.ONE_HUNDRED_DOUBLE)
          .withPaymentAdjustment(schedule.businessDayConvention());
 
          addRedemptionsToCashflows(new List<double>() {redemption});
 
-         Utils.QL_REQUIRE(redemptions_.Count == 1, () => "multiple redemptions created");
+         Utils.QL_REQUIRE(redemptions_.Count == Const.ONE_INT, () => "multiple redemptions created");
 
          option_ = new option(this, exercise, conversionRatio, dividends, callability, creditSpread, cashflows_,
                               dayCounter, schedule,
@@ -398,7 +398,7 @@ namespace QLNet
                                          List<double> spreads,
                                          DayCounter dayCounter,
                                          Schedule schedule,
-                                         double redemption = 100)
+                                         double redemption = Const.ONE_HUNDRED_INT)
          : base(
               exercise, conversionRatio, dividends, callability, creditSpread, issueDate, settlementDays, schedule,
               redemption)
@@ -409,12 +409,12 @@ namespace QLNet
          .withPaymentDayCounter(dayCounter)
          .withFixingDays(fixingDays)
          .withSpreads(spreads)
-         .withNotionals(100.0)
+         .withNotionals(Const.ONE_HUNDRED_DOUBLE)
          .withPaymentAdjustment(schedule.businessDayConvention());
 
          addRedemptionsToCashflows(new List<double> {redemption});
 
-         Utils.QL_REQUIRE(redemptions_.Count == 1, () => "multiple redemptions created");
+         Utils.QL_REQUIRE(redemptions_.Count == Const.ONE_INT, () => "multiple redemptions created");
 
          option_ = new option(this, exercise, conversionRatio, dividends, callability, creditSpread, cashflows_,
                               dayCounter, schedule,

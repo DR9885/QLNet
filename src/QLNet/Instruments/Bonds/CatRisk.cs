@@ -45,7 +45,7 @@ namespace QLNet
          events_ = events;
          eventsStart_ = eventsStart;
          eventsEnd_ = eventsEnd;
-         i_ = 0;
+         i_ = Const.ZERO_INT;
 
          years_ = end_.year() - start_.year();
          if (eventsStart_.month() < start_.month() ||
@@ -55,7 +55,7 @@ namespace QLNet
          }
          else
          {
-            periodStart_ = new Date(start_.Day, start_.month(), eventsStart_.year() + 1);
+            periodStart_ = new Date(start_.Day, start_.month(), eventsStart_.year() + Const.ONE_INT);
          }
          periodEnd_ = new Date(end_.Day, end_.Month, periodStart_.Year + years_);
          while (i_ < events_.Count && (events_)[i_].Key < periodStart_)
@@ -82,8 +82,8 @@ namespace QLNet
          }
          if (start_ + new Period(years_, TimeUnit.Years) < end_)
          {
-            periodStart_ += new Period(years_ + 1, TimeUnit.Years);
-            periodEnd_ += new Period(years_ + 1, TimeUnit.Years);
+            periodStart_ += new Period(years_ + Const.ONE_INT, TimeUnit.Years);
+            periodEnd_ += new Period(years_ + Const.ONE_INT, TimeUnit.Years);
          }
          else
          {

@@ -27,10 +27,10 @@ namespace QLNet
          arguments_ = args;
          process_ = process;
 
-         dividendValues_ = new Vector(arguments_.dividends.Count, 0.0);
+         dividendValues_ = new Vector(arguments_.dividends.Count, Const.ZERO_DOUBLE);
 
          Date settlementDate = process.riskFreeRate().link.referenceDate();
-         for (int i = 0; i < arguments_.dividends.Count; i++)
+         for (int i = Const.ZERO_INT; i < arguments_.dividends.Count; i++)
          {
             if (arguments_.dividends[i].date() >= settlementDate)
             {
@@ -42,35 +42,35 @@ namespace QLNet
          DayCounter dayCounter = process.riskFreeRate().currentLink().dayCounter();
          Date bondSettlement = arguments_.settlementDate;
 
-         stoppingTimes_ = new InitializedList<double>(arguments_.exercise.dates().Count, 0.0);
-         for (var i = 0; i < stoppingTimes_.Count; i++)
+         stoppingTimes_ = new InitializedList<double>(arguments_.exercise.dates().Count, Const.ZERO_DOUBLE);
+         for (var i = Const.ZERO_INT; i < stoppingTimes_.Count; i++)
             stoppingTimes_[i] = dayCounter.yearFraction(bondSettlement, arguments_.exercise.date(i));
 
-         callabilityTimes_ = new InitializedList<double>(arguments_.callabilityDates.Count, 0.0);
-         for (var i = 0; i < callabilityTimes_.Count; i++)
+         callabilityTimes_ = new InitializedList<double>(arguments_.callabilityDates.Count, Const.ZERO_DOUBLE);
+         for (var i = Const.ZERO_INT; i < callabilityTimes_.Count; i++)
             callabilityTimes_[i] = dayCounter.yearFraction(bondSettlement, arguments_.callabilityDates[i]);
 
-         couponTimes_ = new InitializedList<double>(arguments_.couponDates.Count, 0.0);
-         for (var i = 0; i < couponTimes_.Count; i++)
+         couponTimes_ = new InitializedList<double>(arguments_.couponDates.Count, Const.ZERO_DOUBLE);
+         for (var i = Const.ZERO_INT; i < couponTimes_.Count; i++)
             couponTimes_[i] = dayCounter.yearFraction(bondSettlement, arguments_.couponDates[i]);
 
-         dividendTimes_ = new InitializedList<double>(arguments_.dividendDates.Count, 0.0);
-         for (var i = 0; i < dividendTimes_.Count; i++)
+         dividendTimes_ = new InitializedList<double>(arguments_.dividendDates.Count, Const.ZERO_DOUBLE);
+         for (var i = Const.ZERO_INT; i < dividendTimes_.Count; i++)
             dividendTimes_[i] = dayCounter.yearFraction(bondSettlement, arguments_.dividendDates[i]);
 
          if (!grid.empty())
          {
             // adjust times to grid
-            for (var i = 0; i < stoppingTimes_.Count; i++)
+            for (var i = Const.ZERO_INT; i < stoppingTimes_.Count; i++)
                stoppingTimes_[i] = grid.closestTime(stoppingTimes_[i]);
 
-            for (var i = 0; i < couponTimes_.Count; i++)
+            for (var i = Const.ZERO_INT; i < couponTimes_.Count; i++)
                couponTimes_[i] = grid.closestTime(couponTimes_[i]);
 
-            for (var i = 0; i < dividendTimes_.Count; i++)
+            for (var i = Const.ZERO_INT; i < dividendTimes_.Count; i++)
                dividendTimes_[i] = grid.closestTime(dividendTimes_[i]);
 
-            for (var i = 0; i < callabilityTimes_.Count; i++)
+            for (var i = Const.ZERO_INT; i < callabilityTimes_.Count; i++)
                callabilityTimes_[i] = grid.closestTime(callabilityTimes_[i]);
          }
       }
@@ -80,8 +80,8 @@ namespace QLNet
          // Set to bond redemption values
          values_ = new Vector(size, Convert.ToDouble(arguments_.redemption));
 
-         conversionProbability_ = new Vector(size, 0.0);
-         spreadAdjustedRate_ = new Vector(size, 0.0);
+         conversionProbability_ = new Vector(size, Const.ZERO_DOUBLE);
+         spreadAdjustedRate_ = new Vector(size, Const.ZERO_DOUBLE);
 
          DayCounter rfdc = process_.riskFreeRate().link.dayCounter();
 
@@ -95,10 +95,10 @@ namespace QLNet
 
 
          // Claculate blended discount rate to be used on roll back .
-         for (var j = 0; j < values_.Count; j++)
+         for (var j = Const.ZERO_INT; j < values_.Count; j++)
          {
             spreadAdjustedRate_[j] = conversionProbability_[j] * riskFreeRate.value() +
-                                     (1 - conversionProbability_[j]) *
+                                     (Const.ONE_INT - conversionProbability_[j]) *
                                      (riskFreeRate.value() + creditSpread.link.value());
          }
       }
@@ -108,17 +108,17 @@ namespace QLNet
          switch (arguments_.exercise.type())
          {
             case Exercise.Type.American:
-               if (time() <= stoppingTimes_[1] && time() >= stoppingTimes_[0])
+               if (time() <= stoppingTimes_[Const.ONE_INT] && time() >= stoppingTimes_[Const.ZERO_INT])
                   convertible = true;
 
                break;
             case Exercise.Type.European:
-               if (isOnTime(stoppingTimes_[0]))
+               if (isOnTime(stoppingTimes_[Const.ZERO_INT]))
                   convertible = true;
 
                break;
             case Exercise.Type.Bermudan:
-               for (var i = 0; i < stoppingTimes_.Count; i++)
+               for (var i = Const.ZERO_INT; i < stoppingTimes_.Count; i++)
                   if (isOnTime(stoppingTimes_[i]))
                      convertible = true;
 
@@ -128,11 +128,11 @@ namespace QLNet
                break;
          }
 
-         for (var i = 0; i < callabilityTimes_.Count; i++)
+         for (var i = Const.ZERO_INT; i < callabilityTimes_.Count; i++)
             if (isOnTime(callabilityTimes_[i]))
                applyCallability(i, convertible);
 
-         for (var i = 0; i < couponTimes_.Count; i++)
+         for (var i = Const.ZERO_INT; i < couponTimes_.Count; i++)
             if (isOnTime(couponTimes_[i]))
                addCoupon(i);
 
@@ -142,13 +142,13 @@ namespace QLNet
       public void applyConvertibility()
       {
          Vector grid = adjustedGrid();
-         for (var j = 0; j < values_.size(); j++)
+         for (var j = Const.ZERO_INT; j < values_.size(); j++)
          {
             double payoff = Convert.ToDouble(arguments_.conversionRatio) * grid[j];
             if (values_[j] <= payoff)
             {
                values_[j] = payoff;
-               conversionProbability_[j] = 1.0;
+               conversionProbability_[j] = Const.ONE_DOUBLE;
             }
          }
       }
@@ -163,7 +163,7 @@ namespace QLNet
                   double? conversionValue = arguments_.redemption / arguments_.conversionRatio;
                   double? trigger = conversionValue * arguments_.callabilityTriggers[i];
 
-                  for (var j = 0; j < values_.size(); j++)
+                  for (var j = Const.ZERO_INT; j < values_.size(); j++)
                      // the callability is conditioned by the trigger ...
                   {
                      if (grid[j] >= trigger)
@@ -178,7 +178,7 @@ namespace QLNet
                }
                else if (convertible)
                {
-                  for (var j = 0; j < values_.size(); j++)
+                  for (var j = Const.ZERO_INT; j < values_.size(); j++)
                   {
                      // exercising the callability might trigger conversion
                      values_[j] =
@@ -189,13 +189,13 @@ namespace QLNet
                }
                else
                {
-                  for (var j = 0; j < values_.size(); j++)
+                  for (var j = Const.ZERO_INT; j < values_.size(); j++)
                      values_[j] = Math.Min(arguments_.callabilityPrices[i], values_[j]);
                }
 
                break;
             case Callability.Type.Put:
-               for (var j = 0; j < values_.size(); j++)
+               for (var j = Const.ZERO_INT; j < values_.size(); j++)
                   values_[j] = Math.Max(values_[j], arguments_.callabilityPrices[i]);
 
                break;
@@ -213,7 +213,7 @@ namespace QLNet
          double t = time();
          Vector grid = method().grid(t);
          // add back all dividend amounts in the future
-         for (var i = 0; i < arguments_.dividends.Count; i++)
+         for (var i = Const.ZERO_INT; i < arguments_.dividends.Count; i++)
          {
             double dividendTime = dividendTimes_[i];
             if (dividendTime >= t || Utils.close(dividendTime, t))
@@ -221,7 +221,7 @@ namespace QLNet
                Dividend d = arguments_.dividends[i];
                double dividendDiscount = process_.riskFreeRate().currentLink().discount(dividendTime) /
                                          process_.riskFreeRate().currentLink().discount(t);
-               for (var j = 0; j < grid.size(); j++)
+               for (var j = Const.ZERO_INT; j < grid.size(); j++)
                   grid[j] += d.amount(grid[j]) * dividendDiscount;
             }
          }

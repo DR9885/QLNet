@@ -28,21 +28,21 @@ namespace QLNet
                          SwapIndex index,
                          DayCounter paymentDayCounter,
                          BusinessDayConvention paymentConvention = BusinessDayConvention.Following,
-                         int fixingDays = 0,
+                         int fixingDays = Const.ZERO_INT,
                          List<double> gearings = null,
                          List<double> spreads = null,
                          List < double? > caps = null,
                          List < double? > floors = null,
                          bool inArrears = false,
-                         double redemption = 100.0,
+                         double redemption = Const.ONE_HUNDRED_DOUBLE,
                          Date issueDate = null)
       : base(settlementDays, schedule.calendar(), issueDate)
       {
          // Optional value check
          if (gearings == null)
-            gearings = new List<double>() {1};
+            gearings = new List<double>() {Const.ONE_INT};
          if (spreads == null)
-            spreads = new List<double>() {0};
+            spreads = new List<double>() {Const.ZERO_INT};
          if (caps == null)
             caps = new List < double? >();
          if (floors == null)
@@ -62,8 +62,8 @@ namespace QLNet
 
          addRedemptionsToCashflows(new List<double>() { redemption });
 
-         Utils.QL_REQUIRE(cashflows().Count != 0, () => "bond with no cashflows!");
-         Utils.QL_REQUIRE(redemptions_.Count == 1, () => "multiple redemptions created");
+         Utils.QL_REQUIRE(cashflows().Count != Const.ZERO_INT, () => "bond with no cashflows!");
+         Utils.QL_REQUIRE(redemptions_.Count == Const.ONE_INT, () => "multiple redemptions created");
          index.registerWith(update);
       }
    }

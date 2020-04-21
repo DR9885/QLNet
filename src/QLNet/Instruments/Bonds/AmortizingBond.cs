@@ -39,8 +39,8 @@ namespace QLNet
                             DayCounter dCounter,
                             AmortizingMethod Method,
                             Calendar calendar,
-                            double gYield = 0) :
-         base(0, new TARGET(), IssueDate)
+                            double gYield = Const.ZERO_INT) :
+         base(Const.ZERO_INT, new TARGET(), IssueDate)
       {
          _faceValue = FaceValue;
          _marketValue = MarketValue;
@@ -57,7 +57,7 @@ namespace QLNet
          // Store regular payment of faceValue * couponRate for later calculation
          _originalPayment = (_faceValue * _couponRate) / (double)_payFrequency;
 
-         if (gYield.IsEqual(0.0))
+         if (gYield.IsEqual(Const.ZERO_DOUBLE))
             _yield = calculateYield();
          else
             _yield = gYield;
@@ -92,14 +92,14 @@ namespace QLNet
          Date prevDate = _tradeDate;
          Date actualDate = _tradeDate;
 
-         for (int i = 1; i < schedule.Count; ++i)
+         for (int i = Const.ONE_INT; i < schedule.Count; ++i)
          {
 
             actualDate = schedule[i];
             InterestRate rate = new InterestRate(_yield, _dCounter, Compounding.Simple, Frequency.Annual);
             InterestRate rate2 = new InterestRate(_couponRate, _dCounter, Compounding.Simple, Frequency.Annual);
             FixedRateCoupon r, r2;
-            if (i > 1)
+            if (i > Const.ONE_INT)
             {
                r = new FixedRateCoupon(actualDate, currentNominal, rate, prevDate, actualDate, prevDate, actualDate);
                r2 = new FixedRateCoupon(actualDate, currentNominal, rate2, prevDate, actualDate, prevDate, actualDate, null, _originalPayment);
@@ -109,7 +109,7 @@ namespace QLNet
             {
                Calendar nullCalendar = new NullCalendar();
                Period p1 = new Period(_payFrequency);
-               Date testDate = nullCalendar.advance(actualDate, -1 * p1);
+               Date testDate = nullCalendar.advance(actualDate, -Const.ONE_INT * p1);
 
                r = new FixedRateCoupon(actualDate, currentNominal, rate, testDate, actualDate, prevDate, actualDate);
                r2 = new FixedRateCoupon(actualDate, currentNominal, rate2, testDate, actualDate, prevDate, actualDate, null, _originalPayment);
@@ -130,7 +130,7 @@ namespace QLNet
          }
 
          // Add single redemption for yield calculation
-         setSingleRedemption(_faceValue, 100, _maturityDate);
+         setSingleRedemption(_faceValue, Const.ONE_HUNDRED_INT, _maturityDate);
 
       }
 
@@ -138,9 +138,9 @@ namespace QLNet
       {
          // Check Date
          if (d < _tradeDate || d > _maturityDate)
-            return 0;
+            return Const.ZERO_INT;
 
-         double totAmortized = 0;
+         double totAmortized = Const.ZERO_INT;
          Date lastDate = _tradeDate;
          foreach (CashFlow c in cashflows_)
          {
@@ -217,7 +217,7 @@ namespace QLNet
          double TotalAnnualizedReturn = AnnualizedCapitalGain + AnnualInterest;
          double yieldA = TotalAnnualizedReturn / _marketValue;
          double yieldB = TotalAnnualizedReturn / (_faceValue - AnnualizedCapitalGain);
-         return (yieldA + yieldB) / 2;
+         return (yieldA + yieldB) / Const.TWO_INT;
       }
 
       protected double _faceValue;

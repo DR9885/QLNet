@@ -32,7 +32,7 @@ namespace QLNet
       }
       public double getSMM(Date valDate)
       {
-         return 1 - Math.Pow((1 - getCPR(valDate)), (1 / 12d));
+         return Const.ONE_INT - Math.Pow((Const.ONE_INT - getCPR(valDate)), (Const.ONE_INT / Const.TWELVE_DOUBLE));
       }
 
       private double _cpr;

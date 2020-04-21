@@ -114,13 +114,13 @@ namespace QLNet
                              DayCounter paymentDayCounter,
                              NotionalRisk notionalRisk,
                              BusinessDayConvention paymentConvention = QLNet.BusinessDayConvention.Following,
-                             int fixingDays = 0,
+                             int fixingDays = Const.ZERO_INT,
                              List<double> gearings = null,
                              List<double> spreads = null,
                              List < double? > caps = null,
                              List < double? > floors = null,
                              bool inArrears = false,
-                             double redemption = 100.0,
+                             double redemption = Const.ONE_HUNDRED_DOUBLE,
                              Date issueDate = null)
       : base(settlementDays, schedule.calendar(), issueDate, notionalRisk)
       {
@@ -137,10 +137,10 @@ namespace QLNet
          .withNotionals(faceAmount)
          .withPaymentAdjustment(paymentConvention);
 
-         addRedemptionsToCashflows(new InitializedList<double>(1, redemption));
+         addRedemptionsToCashflows(new InitializedList<double>(Const.ONE_INT, redemption));
 
          Utils.QL_REQUIRE(!cashflows().empty(), () => "bond with no cashflows!");
-         Utils.QL_REQUIRE(redemptions_.Count == 1, () => "multiple redemptions created");
+         Utils.QL_REQUIRE(redemptions_.Count == Const.ONE_INT, () => "multiple redemptions created");
 
          iborIndex.registerWith(update);
       }
@@ -156,13 +156,13 @@ namespace QLNet
                              NotionalRisk notionalRisk,
                              BusinessDayConvention accrualConvention = BusinessDayConvention.Following,
                              BusinessDayConvention paymentConvention = BusinessDayConvention.Following,
-                             int fixingDays = 0,
+                             int fixingDays = Const.ZERO_INT,
                              List<double> gearings = null,
                              List<double> spreads = null,
                              List < double? > caps = null,
                              List < double? > floors = null,
                              bool inArrears = false,
-                             double redemption = 100.0,
+                             double redemption = Const.ONE_HUNDRED_DOUBLE,
                              Date issueDate = null,
                              Date stubDate = null,
                              DateGeneration.Rule rule = DateGeneration.Rule.Backward,
@@ -209,10 +209,10 @@ namespace QLNet
          .withPaymentAdjustment(paymentConvention)
          .withNotionals(faceAmount);
 
-         addRedemptionsToCashflows(new InitializedList<double>(1, redemption));
+         addRedemptionsToCashflows(new InitializedList<double>(Const.ONE_INT, redemption));
 
          Utils.QL_REQUIRE(!cashflows().empty(), () => "bond with no cashflows!");
-         Utils.QL_REQUIRE(redemptions_.Count == 1, () => "multiple redemptions created");
+         Utils.QL_REQUIRE(redemptions_.Count == Const.ONE_INT, () => "multiple redemptions created");
 
          iborIndex.registerWith(update);
       }

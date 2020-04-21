@@ -31,19 +31,19 @@ namespace QLNet
          arguments_ = args;
          redemptionTime_ = dayCounter.yearFraction(referenceDate, args.redemptionDate);
 
-         for (int i = 0; i < args.couponDates.Count ; ++i)
+         for (int i = Const.ZERO_INT; i < args.couponDates.Count ; ++i)
             couponTimes_.Add(dayCounter.yearFraction(referenceDate, args.couponDates[i]));
 
-         for (int i = 0; i < args.callabilityDates.Count ; ++i)
+         for (int i = Const.ZERO_INT; i < args.callabilityDates.Count ; ++i)
             callabilityTimes_.Add(dayCounter.yearFraction(referenceDate, args.callabilityDates[i]));
 
          // similar to the tree swaption engine, we collapse similar coupon
          // and exercise dates to avoid mispricing. Delete if unnecessary.
 
-         for (int i = 0; i < callabilityTimes_.Count; i++)
+         for (int i = Const.ZERO_INT; i < callabilityTimes_.Count; i++)
          {
             double exerciseTime = callabilityTimes_[i];
-            for (int j = 0; j < couponTimes_.Count ; j++)
+            for (int j = Const.ZERO_INT; j < couponTimes_.Count ; j++)
             {
                if (withinNextWeek(exerciseTime, couponTimes_[j]))
                   couponTimes_[j] = exerciseTime;
@@ -64,24 +64,24 @@ namespace QLNet
          int i;
 
          t = redemptionTime_;
-         if (t >= 0.0)
+         if (t >= Const.ZERO_DOUBLE)
          {
             times.Add(t);
          }
 
-         for (i = 0; i < couponTimes_.Count ; i++)
+         for (i = Const.ZERO_INT; i < couponTimes_.Count ; i++)
          {
             t = couponTimes_[i];
-            if (t >= 0.0)
+            if (t >= Const.ZERO_DOUBLE)
             {
                times.Add(t);
             }
          }
 
-         for (i = 0; i < callabilityTimes_.Count; i++)
+         for (i = Const.ZERO_INT; i < callabilityTimes_.Count; i++)
          {
             t = callabilityTimes_[i];
-            if (t >= 0.0)
+            if (t >= Const.ZERO_DOUBLE)
             {
                times.Add(t);
             }
@@ -96,18 +96,18 @@ namespace QLNet
       }
       protected override void postAdjustValuesImpl()
       {
-         for (int i = 0; i < callabilityTimes_.Count; i++)
+         for (int i = Const.ZERO_INT; i < callabilityTimes_.Count; i++)
          {
             double t = callabilityTimes_[i];
-            if (t >= 0.0 && isOnTime(t))
+            if (t >= Const.ZERO_DOUBLE && isOnTime(t))
             {
                applyCallability(i);
             }
          }
-         for (int i = 0; i < couponTimes_.Count; i++)
+         for (int i = Const.ZERO_INT; i < couponTimes_.Count; i++)
          {
             double t = couponTimes_[i];
-            if (t >= 0.0 && isOnTime(t))
+            if (t >= Const.ZERO_DOUBLE && isOnTime(t))
             {
                addCoupon(i);
             }
@@ -124,14 +124,14 @@ namespace QLNet
          switch (arguments_.putCallSchedule[i].type())
          {
             case Callability.Type.Call:
-               for (j = 0; j < values_.size(); j++)
+               for (j = Const.ZERO_INT; j < values_.size(); j++)
                {
                   values_[j] = Math.Min(arguments_.callabilityPrices[i], values_[j]);
                }
                break;
 
             case Callability.Type.Put:
-               for (j = 0; j < values_.size(); j++)
+               for (j = Const.ZERO_INT; j < values_.size(); j++)
                {
                   values_[j] = Math.Max(values_[j], arguments_.callabilityPrices[i]);
                }
@@ -150,7 +150,7 @@ namespace QLNet
 
       private bool withinNextWeek(double t1, double t2)
       {
-         double dt = 1.0 / 52;
+         double dt = Const.ONE_DOUBLE / 52;
          return t1 <= t2 && t2 <= t1 + dt;
       }
 

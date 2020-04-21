@@ -24,7 +24,7 @@ namespace QLNet
    {
 
       public PSACurve(Date startdate)
-         : this(startdate, 1) {}
+         : this(startdate, Const.ONE_INT) {}
 
       public PSACurve(Date startdate, double multiplier)
       {
@@ -35,14 +35,14 @@ namespace QLNet
       public double getCPR(Date valDate)
       {
          Thirty360 dayCounter = new Thirty360();
-         int d = dayCounter.dayCount(_startDate, valDate) / 30 + 1;
+         int d = dayCounter.dayCount(_startDate, valDate) / Const.THIRTY_INT + Const.ONE_INT;
 
-         return (d <= 30 ? 0.06 * (d / 30d) : 0.06) * _multi;
+         return (d <= Const.THIRTY_INT ? Const.SIX_PERCENT * (d / Const.THIRTY_DOUBLE) : Const.SIX_PERCENT) * _multi;
       }
 
       public double getSMM(Date valDate)
       {
-         return 1 - Math.Pow((1 - getCPR(valDate)), (1 / 12d));
+         return Const.ONE_INT - Math.Pow((Const.ONE_INT - getCPR(valDate)), (Const.ONE_INT / Const.TWELVE_DOUBLE));
       }
 
       private Date _startDate;

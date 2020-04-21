@@ -98,7 +98,7 @@ namespace QLNet
          frequency_ = sinkingFrequency;
          dayCounter_ = accrualDayCounter;
 
-         Utils.QL_REQUIRE(bondTenor.length() > 0, () =>
+         Utils.QL_REQUIRE(bondTenor.length() > Const.ZERO_INT, () =>
                           "bond tenor must be positive. "
                           + bondTenor + " is not allowed.");
 
@@ -135,38 +135,38 @@ namespace QLNet
                                               double initialNotional)
       {
          Period freqPeriod = new Period(sinkingFrequency);
-         int nPeriods = 0;
+         int nPeriods = Const.ZERO_INT;
          Utils.QL_REQUIRE(isSubPeriod(freqPeriod, maturityTenor, out nPeriods), () =>
                           "Bond frequency is incompatible with the maturity tenor");
 
-         List<double> notionals = new InitializedList<double>(nPeriods + 1);
-         notionals[0] = initialNotional;
+         List<double> notionals = new InitializedList<double>(nPeriods + Const.ONE_INT);
+         notionals[Const.ZERO_INT] = initialNotional;
          double coupon = couponRate / (double)sinkingFrequency;
-         double compoundedInterest = 1.0;
-         double totalValue = Math.Pow(1.0 + coupon, nPeriods);
-         for (int i = 0; i < nPeriods - 1; ++i)
+         double compoundedInterest = Const.ONE_DOUBLE;
+         double totalValue = Math.Pow(Const.ONE_DOUBLE + coupon, nPeriods);
+         for (int i = Const.ZERO_INT; i < nPeriods - Const.ONE_INT; ++i)
          {
-            compoundedInterest *= (1.0 + coupon);
-            double currentNotional = 0.0;
-            if (coupon < 1.0e-12)
+            compoundedInterest *= (Const.ONE_DOUBLE + coupon);
+            double currentNotional = Const.ZERO_DOUBLE;
+            if (coupon < Const.ACCURACY_TWELVE)
             {
                currentNotional =
-                  initialNotional * (1.0 - (i + 1.0) / nPeriods);
+                  initialNotional * (Const.ONE_DOUBLE - (i + Const.ONE_DOUBLE) / nPeriods);
             }
             else
             {
                currentNotional =
-                  initialNotional * (compoundedInterest - (compoundedInterest - 1.0) / (1.0 - 1.0 / totalValue));
+                  initialNotional * (compoundedInterest - (compoundedInterest - Const.ONE_DOUBLE) / (Const.ONE_DOUBLE - Const.ONE_DOUBLE / totalValue));
             }
-            notionals[i + 1] = currentNotional;
+            notionals[i + Const.ONE_INT] = currentNotional;
          }
-         notionals[notionals.Count - 1] = 0.0;
+         notionals[notionals.Count - Const.ONE_INT] = Const.ZERO_DOUBLE;
          return notionals;
       }
 
       protected bool isSubPeriod(Period subPeriod, Period superPeriod, out int numSubPeriods)
       {
-         numSubPeriods = 0;
+         numSubPeriods = Const.ZERO_INT;
 
          KeyValuePair<int, int> superDays = daysMinMax(superPeriod);
          KeyValuePair<int, int>  subDays = daysMinMax(subPeriod);
@@ -206,11 +206,11 @@ namespace QLNet
             case TimeUnit.Days:
                return new KeyValuePair<int, int>(p.length(), p.length());
             case TimeUnit.Weeks:
-               return new KeyValuePair<int, int>(7 * p.length(), 7 * p.length());
+               return new KeyValuePair<int, int>(Const.SEVEN_INT * p.length(), Const.SEVEN_INT * p.length());
             case TimeUnit.Months:
-               return new KeyValuePair<int, int>(28 * p.length(), 31 * p.length());
+               return new KeyValuePair<int, int>(Const.TWENTY_EIGHT_INT * p.length(), Const.THIRTY_ONE_INT * p.length());
             case TimeUnit.Years:
-               return new KeyValuePair<int, int>(365 * p.length(), 366 * p.length());
+               return new KeyValuePair<int, int>(Const.THREE_HUNDRED_SIXTY_FIVE_INT * p.length(), Const.THREE_HUNDRED_SIXTY_SIX_INT * p.length());
             default:
                Utils.QL_FAIL("unknown time unit (" + p.units() + ")");
                return new KeyValuePair<int, int>();

@@ -51,9 +51,18 @@ namespace QLNet
       public const int TWO_INT = 2;
       public const int THREE_INT = 3;
       public const int FOUR_INT = 4;
+      public const int FIVE_INT = 5;
+      public const int SIX_INT = 6;
+      public const int SEVEN_INT = 7;
       public const int EIGHT_INT = 8;
       public const int TWELVE_INT = 12;
+      public const int TWENTY_EIGHT_INT = 28;
+      public const int THIRTY_INT = 30;
+      public const int THIRTY_ONE_INT = 31;
       public const int ONE_HUNDRED_INT = 100;
+      public const int THREE_HUNDRED_SIXTY_INT = 360;
+      public const int THREE_HUNDRED_SIXTY_FIVE_INT = 365;
+      public const int THREE_HUNDRED_SIXTY_SIX_INT = 366;
       public const int ONE_THOUSAND_INT = 1000;
       public const int FIVE_THOUSAND_INT = 5000;
       public const int ONE_HUNDRED_THOUSAND_INT = 100000;
@@ -65,7 +74,9 @@ namespace QLNet
       public const double TWO_DOUBLE = 2.0;
       public const double THREE_DOUBLE = 3.0;
       public const double TEN_DOUBLE = 10.0;
+      public const double TWELVE_DOUBLE = 12.0;
       public const double TWENTY_DOUBLE = 20.0;
+      public const double THIRTY_DOUBLE = 30.0;
       public const double ONE_HUNDRED_DOUBLE = 100.0;
 
       public const double ACCURACY_FOUR = 1.0e-4;
@@ -78,9 +89,12 @@ namespace QLNet
       public const double ACCURACY_SIXTEEN = 1.0e-16;
 
       public const double ONE_TEN_THOUSANDTH = 0.0001;
+      public const double ONE_THOUSANDTH = 0.001;
       public const double ONE_PERCENT = 0.01;
+      public const double TWO_PERCENT = 0.02;
       public const double THREE_PERCENT = 0.03;
       public const double FIVE_PERCENT = 0.05;
+      public const double SIX_PERCENT = 0.06;
       public const double FIFTY_PERCENT = 0.5;
       public const double TWENTY_PERCENT = 0.5;
       public const double NINTY_NINE_PERCENT = 0.99;

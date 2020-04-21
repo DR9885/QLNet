@@ -54,25 +54,25 @@ namespace QLNet
          List<CashFlow> expectedcashflows = new List<CashFlow>();
 
          List<double> notionals = new InitializedList<double>(schedule_.Count);
-         notionals[0] = notionals_[0];
-         for (int i = 0; i < schedule_.Count - 1; ++i)
+         notionals[Const.ZERO_INT] = notionals_[Const.ZERO_INT];
+         for (int i = Const.ZERO_INT; i < schedule_.Count - Const.ONE_INT; ++i)
          {
             double currentNotional = notionals[i];
             double smm = SMM(schedule_[i]);
-            double prepay = (notionals[i] * bondFactors_[i + 1]) / bondFactors_[i] * smm;
-            double actualamort = currentNotional * (1 - bondFactors_[i + 1] / bondFactors_[i]);
-            notionals[i + 1] = currentNotional - actualamort - prepay;
+            double prepay = (notionals[i] * bondFactors_[i + Const.ONE_INT]) / bondFactors_[i] * smm;
+            double actualamort = currentNotional * (Const.ONE_INT - bondFactors_[i + Const.ONE_INT] / bondFactors_[i]);
+            notionals[i + Const.ONE_INT] = currentNotional - actualamort - prepay;
 
             // ADD
-            CashFlow c1 = new VoluntaryPrepay(prepay, schedule_[i + 1]);
-            CashFlow c2 = new AmortizingPayment(actualamort, schedule_[i + 1]);
-            CashFlow c3 = new FixedRateCoupon(schedule_[i + 1], currentNotional, new InterestRate(PassThroughRate_, dCounter_, Compounding.Simple, Frequency.Annual), schedule_[i], schedule_[i + 1]);
+            CashFlow c1 = new VoluntaryPrepay(prepay, schedule_[i + Const.ONE_INT]);
+            CashFlow c2 = new AmortizingPayment(actualamort, schedule_[i + Const.ONE_INT]);
+            CashFlow c3 = new FixedRateCoupon(schedule_[i + Const.ONE_INT], currentNotional, new InterestRate(PassThroughRate_, dCounter_, Compounding.Simple, Frequency.Annual), schedule_[i], schedule_[i + Const.ONE_INT]);
             expectedcashflows.Add(c1);
             expectedcashflows.Add(c2);
             expectedcashflows.Add(c3);
 
          }
-         notionals[notionals.Count - 1] = 0.0;
+         notionals[notionals.Count - Const.ONE_INT] = Const.ZERO_DOUBLE;
 
          return expectedcashflows;
       }
@@ -84,33 +84,33 @@ namespace QLNet
             return prepayModel_.getSMM(d + (originalLength_ - remainingLength_));
          }
          else
-            return 0;
+            return Const.ZERO_INT;
       }
 
       public double MonthlyYield()
       {
          Brent solver = new Brent();
-         solver.setMaxEvaluations(100);
+         solver.setMaxEvaluations(Const.ONE_HUNDRED_INT);
          List<CashFlow> cf = expectedCashflows();
 
          MonthlyYieldFinder objective = new MonthlyYieldFinder(notional(settlementDate()), cf, settlementDate());
-         return solver.solve(objective, 1.0e-10, 0.02, 0.0, 1.0) / 100 ;
+         return solver.solve(objective, Const.ACCURACY_TEN, Const.TWO_PERCENT, Const.ZERO_DOUBLE, Const.ONE_DOUBLE) / Const.ONE_HUNDRED_INT ;
       }
 
       public double BondEquivalentYield()
       {
-         return 2 * (Math.Pow(1 + MonthlyYield(), 6) - 1);
+         return Const.TWO_INT * (Math.Pow(Const.ONE_INT + MonthlyYield(), Const.SIX_INT) - Const.ONE_INT);
       }
 
       protected void calcBondFactor()
       {
          bondFactors_ = new InitializedList<double>(notionals_.Count);
-         for (int i = 0 ; i < notionals_.Count ; i++)
+         for (int i = Const.ZERO_INT ; i < notionals_.Count ; i++)
          {
-            if (i == 0)
-               bondFactors_[i] = 1;
+            if (i == Const.ZERO_INT)
+               bondFactors_[i] = Const.ONE_INT;
             else
-               bondFactors_[i] = notionals_[i] / notionals_[0];
+               bondFactors_[i] = notionals_[i] / notionals_[Const.ZERO_INT];
          }
       }
 
@@ -149,12 +149,12 @@ namespace QLNet
    {
       public static double PVDifference(double faceAmount, List<CashFlow> cashflows, double yield, Date settlement)
       {
-         double price = 0.0;
-         Date actualDate = new Date(1, 1, 1970) ;
-         int cashflowindex = 0 ;
+         double price = Const.ZERO_DOUBLE;
+         Date actualDate = new Date(Const.ONE_INT, Const.ONE_INT, 1970) ;
+         int cashflowindex = Const.ZERO_INT ;
 
 
-         for (int i = 0; i < cashflows.Count; i++)
+         for (int i = Const.ZERO_INT; i < cashflows.Count; i++)
          {
             if (cashflows[i].hasOccurred(settlement))
                continue;
@@ -165,7 +165,7 @@ namespace QLNet
                cashflowindex++;
             }
             double amount = cashflows[i].amount();
-            price += amount / Math.Pow((1 + yield / 100), cashflowindex);
+            price += amount / Math.Pow((Const.ONE_INT + yield / Const.ONE_HUNDRED_INT), cashflowindex);
          }
 
          return price - faceAmount;

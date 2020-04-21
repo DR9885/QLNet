@@ -33,21 +33,21 @@ namespace QLNet
    {
       public NotionalPath()
       {
-         double previous = 1.0;//full notional at the beginning
+         double previous = Const.ONE_DOUBLE;//full notional at the beginning
          notionalRate_ = new List<KeyValuePair<Date, double>> {new KeyValuePair<Date, double>(new Date(), previous)};
       }
       public double notionalRate(Date date)  //The fraction of the original notional left on a given date
       {
-         int i = 0;
+         int i = Const.ZERO_INT;
          for (; i < notionalRate_.Count && notionalRate_[i].Key <= date; ++i) //TODO do we take notional after reductions or before?
          {}
-         return notionalRate_[i - 1].Value;
+         return notionalRate_[i - Const.ONE_INT].Value;
 
       }
 
       public void reset()
       {
-         notionalRate_ = new InitializedList<KeyValuePair<Date, double>>(1, new KeyValuePair<Date, double>(new Date(), 1));
+         notionalRate_ = new InitializedList<KeyValuePair<Date, double>>(Const.ONE_INT, new KeyValuePair<Date, double>(new Date(), Const.ONE_INT));
       }
 
       public void addReduction(Date date, double newRate)
@@ -57,7 +57,7 @@ namespace QLNet
 
       public double loss()
       {
-         return 1.0 - notionalRate_.Last().Value;
+         return Const.ONE_DOUBLE - notionalRate_.Last().Value;
       }
 
       private List<KeyValuePair<Date, double> > notionalRate_;
@@ -87,10 +87,10 @@ namespace QLNet
                                       NotionalPath path)
       {
          path.reset();
-         for (int i = 0; i < events.Count; ++i)
+         for (int i = Const.ZERO_INT; i < events.Count; ++i)
          {
             if (events[i].Value >= threshold_)
-               path.addReduction(paymentOffset_.paymentDate(events[i].Key), 0.0);
+               path.addReduction(paymentOffset_.paymentDate(events[i].Key), Const.ZERO_DOUBLE);
          }
       }
 
@@ -111,14 +111,14 @@ namespace QLNet
       public override void updatePath(List<KeyValuePair<Date, double> >  events, NotionalPath path)
       {
          path.reset();
-         double losses = 0;
-         double previousNotional = 1;
-         for (int i = 0; i < events.Count; ++i)
+         double losses = Const.ZERO_INT;
+         double previousNotional = Const.ONE_INT;
+         for (int i = Const.ZERO_INT; i < events.Count; ++i)
          {
             losses += events[i].Value;
-            if (losses > attachement_ && previousNotional > 0)
+            if (losses > attachement_ && previousNotional > Const.ZERO_INT)
             {
-               previousNotional = Math.Max(0.0, (exhaustion_ - losses) / (exhaustion_ - attachement_));
+               previousNotional = Math.Max(Const.ZERO_DOUBLE, (exhaustion_ - losses) / (exhaustion_ - attachement_));
                path.addReduction(paymentOffset_.paymentDate(events[i].Key), previousNotional);
             }
          }

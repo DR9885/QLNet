@@ -28,13 +28,13 @@ namespace QLNet
       public FloatingRateBond(int settlementDays, double faceAmount, Schedule schedule, IborIndex index,
                               DayCounter paymentDayCounter)
          : this(settlementDays, faceAmount, schedule, index, paymentDayCounter, BusinessDayConvention.Following,
-                0, new List<double>() { 1 }, new List<double>() { 0 }, new List < double? >(), new List < double? >(),
-      false, 100, null) { }
+                Const.ZERO_INT, new List<double>() { Const.ONE_INT }, new List<double>() { Const.ZERO_INT }, new List < double? >(), new List < double? >(),
+      false, Const.ONE_HUNDRED_INT, null) { }
       public FloatingRateBond(int settlementDays, double faceAmount, Schedule schedule, IborIndex index,
                               DayCounter paymentDayCounter, BusinessDayConvention paymentConvention, int fixingDays,
                               List<double> gearings, List<double> spreads)
          : this(settlementDays, faceAmount, schedule, index, paymentDayCounter, BusinessDayConvention.Following,
-                fixingDays, gearings, spreads, new List < double? >(), new List < double? >(), false, 100, null) { }
+                fixingDays, gearings, spreads, new List < double? >(), new List < double? >(), false, Const.ONE_HUNDRED_INT, null) { }
       public FloatingRateBond(int settlementDays, double faceAmount, Schedule schedule, IborIndex index, DayCounter paymentDayCounter,
                               BusinessDayConvention paymentConvention, int fixingDays, List<double> gearings, List<double> spreads,
                               List < double? > caps, List < double? > floors, bool inArrears, double redemption, Date issueDate)
@@ -54,8 +54,8 @@ namespace QLNet
 
          addRedemptionsToCashflows(new List<double>() { redemption });
 
-         Utils.QL_REQUIRE(cashflows().Count != 0, () => "bond with no cashflows!");
-         Utils.QL_REQUIRE(redemptions_.Count == 1, () => "multiple redemptions created");
+         Utils.QL_REQUIRE(cashflows().Count != Const.ZERO_INT, () => "bond with no cashflows!");
+         Utils.QL_REQUIRE(redemptions_.Count == Const.ONE_INT, () => "multiple redemptions created");
 
          index.registerWith(update);
       }
@@ -124,8 +124,8 @@ namespace QLNet
 
          addRedemptionsToCashflows(new List<double>() { redemption });
 
-         Utils.QL_REQUIRE(cashflows().Count != 0, () => "bond with no cashflows!");
-         Utils.QL_REQUIRE(redemptions_.Count == 1, () => "multiple redemptions created");
+         Utils.QL_REQUIRE(cashflows().Count != Const.ZERO_INT, () => "bond with no cashflows!");
+         Utils.QL_REQUIRE(redemptions_.Count == Const.ONE_INT, () => "multiple redemptions created");
 
          index.registerWith(update);
       }

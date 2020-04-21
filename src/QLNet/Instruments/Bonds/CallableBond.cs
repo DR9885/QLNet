@@ -69,7 +69,7 @@ namespace QLNet
       {
          calculate();
          Utils.QL_REQUIRE(!isExpired(), () => "instrument expired");
-         double guess = 0.5 * (minVol + maxVol);
+         double guess = Const.FIFTY_PERCENT * (minVol + maxVol);
          blackDiscountCurve_.linkTo(discountCurve, false);
          ImpliedVolHelper f = new ImpliedVolHelper(this, targetValue);
          Brent solver = new Brent();
@@ -101,9 +101,9 @@ namespace QLNet
                         Compounding compounding,
                         Frequency frequency,
                         Date settlement = null,
-                        double accuracy = 1.0e-10,
-                        int maxIterations = 100,
-                        double guess = 0.0)
+                        double accuracy = Const.ACCURACY_TEN,
+                        int maxIterations = Const.ONE_HUNDRED_INT,
+                        double guess = Const.ZERO_DOUBLE)
       {
          if (settlement == null)
             settlement = settlementDate();
@@ -116,7 +116,7 @@ namespace QLNet
          Brent solver = new Brent();
          solver.setMaxEvaluations(maxIterations);
 
-         double step = 0.001;
+         double step = Const.ONE_THOUSANDTH;
          double oas = solver.solve(obj, accuracy, guess, step);
 
          return continuousToConv(oas,
@@ -186,10 +186,10 @@ namespace QLNet
 
          double Pmm = cleanPriceOAS(oas - bump, engineTS, dayCounter, compounding, frequency);
 
-         if (P.IsEqual(0.0))
-            return 0;
+         if (P.IsEqual(Const.ZERO_DOUBLE))
+            return Const.ZERO_INT;
 
-         return (Pmm - Ppp) / (2 * P * bump);
+         return (Pmm - Ppp) / (Const.TWO_INT * P * bump);
       }
 
       /// <summary>
@@ -220,10 +220,10 @@ namespace QLNet
 
          double Pmm = cleanPriceOAS(oas - bump, engineTS, dayCounter, compounding, frequency);
 
-         if (P.IsEqual(0.0))
-            return 0;
+         if (P.IsEqual(Const.ZERO_DOUBLE))
+            return Const.ZERO_INT;
 
-         return (Ppp + Pmm - 2 * P) / (Math.Pow(bump, 2) * P);
+         return (Ppp + Pmm - Const.TWO_INT * P) / (Math.Pow(bump, Const.TWO_INT) * P);
       }
 
       protected CallableBond(int settlementDays,
@@ -240,7 +240,7 @@ namespace QLNet
          if (!putCallSchedule_.empty())
          {
             Date finalOptionDate = Date.minDate();
-            for (int i = 0; i < putCallSchedule_.Count; ++i)
+            for (int i = Const.ZERO_INT; i < putCallSchedule_.Count; ++i)
             {
                finalOptionDate = Date.Max(finalOptionDate,
                                           putCallSchedule_[i].date());
@@ -278,7 +278,7 @@ namespace QLNet
          public ImpliedVolHelper(CallableBond bond, double targetValue)
          {
             targetValue_ = targetValue;
-            vol_ = new SimpleQuote(0.0);
+            vol_ = new SimpleQuote(Const.ZERO_DOUBLE);
             bond.blackVolQuote_.linkTo(vol_);
 
             Utils.QL_REQUIRE(bond.blackEngine_ != null, () => "Must set blackEngine_ to use impliedVolatility");
@@ -368,7 +368,7 @@ namespace QLNet
          public override void validate()
          {
             Utils.QL_REQUIRE(settlementDate != null, () => "null settlement date");
-            Utils.QL_REQUIRE(redemption >= 0.0, () => "positive redemption required: " + redemption + " not allowed");
+            Utils.QL_REQUIRE(redemption >= Const.ZERO_DOUBLE, () => "positive redemption required: " + redemption + " not allowed");
             Utils.QL_REQUIRE(callabilityDates.Count == callabilityPrices.Count, () => "different number of callability dates and prices");
             Utils.QL_REQUIRE(couponDates.Count == couponAmounts.Count, () => "different number of coupon dates and amounts");
          }
@@ -467,14 +467,14 @@ namespace QLNet
                                    List<double> coupons,
                                    DayCounter accrualDayCounter,
                                    BusinessDayConvention paymentConvention = BusinessDayConvention.Following,
-                                   double redemption = 100.0,
+                                   double redemption = Const.ONE_HUNDRED_DOUBLE,
                                    Date issueDate = null,
                                    CallabilitySchedule putCallSchedule = null)
          : base(settlementDays, schedule, accrualDayCounter, issueDate, putCallSchedule)
       {
          frequency_ = schedule.tenor().frequency();
 
-         bool isZeroCouponBond = (coupons.Count == 1 && Utils.close(coupons[0], 0.0));
+         bool isZeroCouponBond = (coupons.Count == Const.ONE_INT && Utils.close(coupons[Const.ZERO_INT], Const.ZERO_DOUBLE));
 
          if (!isZeroCouponBond)
          {
@@ -492,7 +492,7 @@ namespace QLNet
          }
 
          // used for impliedVolatility() calculation
-         SimpleQuote dummyVolQuote = new SimpleQuote(0.0);
+         SimpleQuote dummyVolQuote = new SimpleQuote(Const.ZERO_DOUBLE);
          blackVolQuote_.linkTo(dummyVolQuote);
          blackEngine_ = new BlackCallableFixedRateBondEngine(blackVolQuote_, blackDiscountCurve_);
       }
@@ -511,10 +511,10 @@ namespace QLNet
 
          List<CashFlow> cfs = cashflows();
 
-         arguments.couponDates = new List<Date>(cfs.Count - 1);
-         arguments.couponAmounts = new List<double>(cfs.Count - 1);
+         arguments.couponDates = new List<Date>(cfs.Count - Const.ONE_INT);
+         arguments.couponAmounts = new List<double>(cfs.Count - Const.ONE_INT);
 
-         for (int i = 0; i < cfs.Count ; i++)
+         for (int i = Const.ZERO_INT; i < cfs.Count ; i++)
          {
             if (!cfs[i].hasOccurred(settlement, false))
             {
@@ -532,7 +532,7 @@ namespace QLNet
          arguments.frequency = frequency_;
          arguments.putCallSchedule = putCallSchedule_;
 
-         for (int i = 0; i < putCallSchedule_.Count; i++)
+         for (int i = Const.ZERO_INT; i < putCallSchedule_.Count; i++)
          {
             if (!putCallSchedule_[i].hasOccurred(settlement, false))
             {
@@ -546,7 +546,7 @@ namespace QLNet
                      price = clean price. Use here because callability is
                      always applied before coupon in the tree engine.
                   */
-                  arguments.callabilityPrices[arguments.callabilityPrices.Count - 1] += this.accrued(putCallSchedule_[i].date());
+                  arguments.callabilityPrices[arguments.callabilityPrices.Count - Const.ONE_INT] += this.accrued(putCallSchedule_[i].date());
                }
             }
          }
@@ -571,7 +571,7 @@ namespace QLNet
             settlement = settlementDate();
 
          bool IncludeToday = false;
-         for (int i = 0; i < cashflows_.Count; ++i)
+         for (int i = Const.ZERO_INT; i < cashflows_.Count; ++i)
          {
             // the first coupon paying after d is the one we're after
             if (!cashflows_[i].hasOccurred(settlement, IncludeToday))
@@ -580,12 +580,12 @@ namespace QLNet
                if (coupon != null)
                   // !!!
                   return coupon.accruedAmount(settlement) /
-                         notional(settlement) * 100.0;
+                         notional(settlement) * Const.ONE_HUNDRED_DOUBLE;
                else
-                  return 0.0;
+                  return Const.ZERO_DOUBLE;
             }
          }
-         return 0.0;
+         return Const.ZERO_DOUBLE;
       }
    }
 
@@ -600,7 +600,7 @@ namespace QLNet
                                     Date maturityDate,
                                     DayCounter dayCounter,
                                     BusinessDayConvention paymentConvention = BusinessDayConvention.Following,
-                                    double redemption = 100.0,
+                                    double redemption = Const.ONE_HUNDRED_DOUBLE,
                                     Date issueDate = null,
                                     CallabilitySchedule putCallSchedule = null)
          : base(settlementDays, faceAmount, new Schedule(issueDate, maturityDate,
@@ -610,7 +610,7 @@ namespace QLNet
                                                          paymentConvention,
                                                          DateGeneration.Rule.Backward,
                                                          false),
-                new List<double>() {0.0}, dayCounter, paymentConvention, redemption, issueDate, putCallSchedule)
+                new List<double>() {Const.ZERO_DOUBLE}, dayCounter, paymentConvention, redemption, issueDate, putCallSchedule)
       {}
    }
 }

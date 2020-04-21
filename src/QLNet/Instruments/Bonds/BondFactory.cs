@@ -30,7 +30,7 @@ namespace QLNet
                                                       Frequency payFrequency,
                                                       DayCounter dCounter,
                                                       AmortizingMethod Method,
-                                                      double gYield = 0)
+                                                      double gYield = Const.ZERO_INT)
       {
          return new AmortizingBond(FaceValue,
                                    MarketValue,
@@ -70,7 +70,7 @@ namespace QLNet
          Schedule schedule = new Schedule(startDate, endDate, bondLength, calendar, BusinessDayConvention.Unadjusted,
                                           BusinessDayConvention.Unadjusted, DateGeneration.Rule.Backward, false);
 
-         bond = new AmortizingFixedRateBond(0, calendar, amount, startDate, bondLength, payFrequency, rate, dCounter);
+         bond = new AmortizingFixedRateBond(Const.ZERO_INT, calendar, amount, startDate, bondLength, payFrequency, rate, dCounter);
 
          return bond;
 
@@ -107,7 +107,7 @@ namespace QLNet
          Schedule schedule = new Schedule(startDate, endDate, bondLength, calendar, BusinessDayConvention.Unadjusted,
                                           BusinessDayConvention.Unadjusted, DateGeneration.Rule.Backward, false);
 
-         bond = new MBSFixedRateBond(0, calendar, amount, startDate, bondLength, originalLength, payFrequency, WACrate, PassThroughRate, dCounter, psaCurve);
+         bond = new MBSFixedRateBond(Const.ZERO_INT, calendar, amount, startDate, bondLength, originalLength, payFrequency, WACrate, PassThroughRate, dCounter, psaCurve);
 
          return bond;
 

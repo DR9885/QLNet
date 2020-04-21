@@ -29,7 +29,7 @@ namespace QLNet
                                    SwapIndex index,
                                    DayCounter paymentDayCounter,
                                    BusinessDayConvention paymentConvention = BusinessDayConvention.Following,
-                                   int fixingDays = 0,
+                                   int fixingDays = Const.ZERO_INT,
                                    List<double> gearings = null,
                                    List<double> spreads = null,
                                    List < double? > caps = null,
@@ -40,9 +40,9 @@ namespace QLNet
       {
          // Optional value check
          if (gearings == null)
-            gearings = new List<double>() {1.0};
+            gearings = new List<double>() {Const.ONE_DOUBLE};
          if (spreads == null)
-            spreads = new List<double>() {0};
+            spreads = new List<double>() {Const.ZERO_INT};
          if (caps == null)
             caps = new List < double? >();
          if (floors == null)
